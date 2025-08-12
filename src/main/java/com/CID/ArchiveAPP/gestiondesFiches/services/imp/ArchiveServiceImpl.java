@@ -2,7 +2,6 @@ package com.CID.ArchiveAPP.gestiondesFiches.services.imp;
 
 
 import com.CID.ArchiveAPP.gestiondesFiches.exceptions.NotFoundException;
-import com.CID.ArchiveAPP.gestiondesFiches.exceptions.VersionConflictException;
 import com.CID.ArchiveAPP.gestiondesFiches.data.dtos.ArchiveUpdateRequest;
 import com.CID.ArchiveAPP.gestiondesFiches.data.entities.Archive;
 import com.CID.ArchiveAPP.gestiondesFiches.data.enums.Client;
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
