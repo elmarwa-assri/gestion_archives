@@ -11,8 +11,5 @@ public class CadreController {
         return "dashbord_cadre";
     }
 
-    @GetMapping("/consulter-cadre")
-    public String consulter() {
-        return "consulter_cadre";
-    }
+
 }

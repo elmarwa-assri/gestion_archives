@@ -67,9 +67,6 @@
       text-align:center;
       font-size:1.5rem; color:#00539c; margin-bottom:20px;
     }
-    .grid-2 {
-      display:grid; grid-template-columns:1fr 1fr; gap:20px;
-    }
     .form-group {
       margin-bottom:15px;
     }
@@ -100,19 +97,29 @@
     .form-actions .btn:hover {
       background:#004070; transform:translateY(-1px);
     }
+
+    /* Message de succès */
+    .success-message {
+      background:#d4edda; color:#155724;
+      padding:10px 20px; border-radius:5px;
+      border:1px solid #c3e6cb; margin-bottom:20px;
+      font-weight:500;
+    }
   </style>
 </head>
 <body>
 
 <!-- Sidebar -->
 <aside class="sidebar">
-  <img src="./logo.png" alt="Logo CID" class="logo" />
+  <img th:src="@{/images/logo.png}" alt="Logo CID" class="logo" />
   <ul class="nav-links">
     <li><a href="/dashbord_cadre">Tableau de bord</a></li>
     <li><a href="/formulaire-cadre" class="active">Formulaire de projet à archiver</a></li>
     <li><a href="/consulter-cadre">Consulter fiches de son pôle</a></li>
   </ul>
-  <button class="logout">Déconnexion</button>
+  <form th:action="@{/logout}" method="post">
+    <button class="logout">Déconnexion</button>
+  </form>
 </aside>
 
 <!-- Main content -->
@@ -122,9 +129,14 @@
     Saisissez tous les détails de votre projet, puis envoyez le formulaire à l’agent d’archivage.
   </p>
 
+  <!-- Message de succès -->
+  <div id="success-message" class="success-message" th:if="${successMessage}">
+    <span th:text="${successMessage}"></span>
+  </div>
+
   <div class="form-add">
     <h2>Informations générales</h2>
-    <form th:action="@{/archives/envoiFormulaire}" method="post" th:object="${archive}">
+    <form id="archive-form" th:action="@{/archives/envoiFormulaire}" method="post" th:object="${archive}">
       <div class="form-group">
         <label for="titre">Titre</label>
         <input type="text" id="titre" th:field="*{titre}" required />
@@ -170,16 +182,25 @@
       </div>
 
       <div class="form-actions">
-        <button type="submit" class="btn">Envoyer à l’agent d’archivage</button>
+        <button type="submit" class="btn">Envoyer</button>
       </div>
     </form>
   </div>
 </main>
 
 <script>
-  document.querySelector('.logout').addEventListener('click', function () {
-    window.location.href = '/login';
+  // Si un message de succès existe → vider le formulaire et cacher le message après 3 sec
+  document.addEventListener("DOMContentLoaded", function () {
+    const successMessage = document.getElementById("success-message");
+    if (successMessage) {
+      const form = document.getElementById("archive-form");
+      form.reset(); // vide les champs
+      setTimeout(() => {
+        successMessage.style.display = "none";
+      }, 3000);
+    }
   });
 </script>
+
 </body>
 </html>

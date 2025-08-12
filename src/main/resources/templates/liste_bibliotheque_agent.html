@@ -6,25 +6,110 @@
   <title>Liste des fiches bibliothèque – CID</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
   <style>
-    body { font-family:'Roboto', sans-serif; display:flex; background:#f0f2f5; color:#333; }
-    .sidebar { width:250px; background:#fff; box-shadow:2px 0 5px rgba(0,0,0,0.1); display:flex; flex-direction:column; align-items:center; padding:30px 0; position:fixed; top:0; bottom:0; }
-    .sidebar .logo { width:120px; margin-bottom:40px; }
-    .sidebar .nav-links { list-style:none; width:100%; flex:1; }
-    .sidebar .nav-links li a { display:block; padding:15px 25px; color:#333; text-decoration:none; font-weight:500; transition:background .3s; }
-    .sidebar .nav-links li a.active, .sidebar .nav-links li a:hover { background:#f0f0f0; }
-    .sidebar .logout { margin:20px; padding:10px 20px; background:#f28c1c; color:#fff; border:none; border-radius:5px; font-weight:700; cursor:pointer; transition:background .3s; }
-    .sidebar .logout:hover { background:#e67300; }
-    .main { margin-left:250px; padding:40px; width:100%; }
-    h1 { font-size:2rem; color:#00539c; margin-bottom:10px; }
-    .lead { font-size:1rem; margin-bottom:25px; }
-
-    .table-container { background:#fff; border-radius:8px; box-shadow:0 4px 10px rgba(0,0,0,0.05); padding:20px; margin-top:20px; }
-    table { width:100%; border-collapse:collapse; }
-    th, td { padding:12px 15px; text-align:left; border-bottom:1px solid #ddd; }
-    th { background-color:#f8f9fa; font-weight:700; }
-    tr:hover { background-color:#f5f5f5; }
-    .action-btn { padding:5px 10px; background:#f28c1c; color:#fff; border:none; border-radius:4px; cursor:pointer; margin-right:5px; }
-    .action-btn:hover { background:#e67300; }
+    body {
+      font-family: 'Roboto', sans-serif;
+      display: flex;
+      background: #f0f2f5;
+      color: #333;
+    }
+    .sidebar {
+      width: 250px;
+      background: #fff;
+      box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px 0;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+    }
+    .sidebar .logo {
+      width: 120px;
+      margin-bottom: 40px;
+    }
+    .sidebar .nav-links {
+      list-style: none;
+      width: 100%;
+      flex: 1;
+    }
+    .sidebar .nav-links li a {
+      display: block;
+      padding: 15px 25px;
+      color: #333;
+      text-decoration: none;
+      font-weight: 500;
+      transition: background .3s;
+    }
+    .sidebar .nav-links li a.active,
+    .sidebar .nav-links li a:hover {
+      background: #f0f0f0;
+    }
+    .sidebar .logout {
+      margin: 20px;
+      padding: 10px 20px;
+      background: #f28c1c;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .3s;
+    }
+    .sidebar .logout:hover {
+      background: #e67300;
+    }
+    .main {
+      margin-left: 250px;
+      padding: 40px;
+      width: 100%;
+    }
+    h1 {
+      font-size: 2rem;
+      color: #00539c;
+      margin-bottom: 10px;
+    }
+    .lead {
+      font-size: 1rem;
+      margin-bottom: 25px;
+    }
+    .table-container {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      padding: 20px;
+      margin-top: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background-color: #f8f9fa;
+      font-weight: 700;
+    }
+    tr:hover {
+      background-color: #f5f5f5;
+    }
+    .action-btn {
+      padding: 5px 10px;
+      background: #f28c1c;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-right: 5px;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .action-btn:hover {
+      background: #e67300;
+    }
   </style>
 </head>
 <body>
@@ -69,13 +154,17 @@
         <td th:text="${biblio.author}">Auteur</td>
         <td th:text="${#temporals.format(biblio.dateCreation, 'dd/MM/yyyy')}">01/01/2025</td>
         <td th:text="${biblio.category}">Catégorie</td>
+        <td th:text="${biblio.fileName != null ? biblio.fileName : '—'}"></td>
         <td>
-          <a th:if="${biblio.fileName}" th:href="${biblio.fileName}" target="_blank">Voir</a>
+          <a class="action-btn"
+             th:if="${biblio.fileName}"
+             th:href="@{'/uploads/' + ${biblio.fileName}}"
+             target="_blank">Voir</a>
+          <a class="action-btn"
+             th:if="${biblio.fileName}"
+             th:href="@{/bibliotheques/download/{name}(name=${biblio.fileName})}"
+             download>Télécharger</a>
           <span th:if="${biblio.fileName == null}">—</span>
-        </td>
-        <td>
-          <button class="action-btn" type="button">Voir</button>
-          <a class="action-btn" th:if="${biblio.fileName}" th:href="@{/bibliotheques/download/{name}(name=${biblio.fileName})}" download>Télécharger</a>
         </td>
       </tr>
       </tbody>
