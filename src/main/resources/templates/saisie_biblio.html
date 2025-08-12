@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Saisir une fiche bibliothèque – CID</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Roboto', sans-serif; display: flex; background: #f0f2f5; color: #333; }
+    .sidebar { width: 250px; background: #fff; box-shadow: 2px 0 5px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; padding: 30px 0; position: fixed; top: 0; bottom: 0; }
+    .sidebar .logo { width: 120px; margin-bottom: 40px; }
+    .sidebar .nav-links { list-style: none; width: 100%; flex: 1; }
+    .sidebar .nav-links li a { display: block; padding: 15px 25px; color: #333; text-decoration: none; font-weight: 500; transition: background .3s; }
+    .sidebar .nav-links li a.active, .sidebar .nav-links li a:hover { background: #f0f0f0; }
+    .sidebar .logout { margin: 20px; padding: 10px 20px; background: #f28c1c; color: #fff; border: none; border-radius: 5px; font-weight: 700; cursor: pointer; transition: background .3s; }
+    .sidebar .logout:hover { background: #e67300; }
+    .main { margin-left: 250px; padding: 40px; width: 100%; }
+    h1 { font-size: 2rem; color: #00539c; margin-bottom: 10px; }
+    .lead { font-size: 1rem; margin-bottom: 25px; }
+    .section { margin-bottom: 30px; }
+    h2 { font-size: 1.2rem; margin-bottom: 15px; color: #444; }
+    .form-group { margin-bottom: 15px; }
+    label { display: block; margin-bottom: 5px; font-weight: bold; }
+    input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .form-actions { margin-top: 30px; }
+    .btn { background: #47a5dc; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-weight: 700; cursor: pointer; }
+    .btn:hover { background: #268bbd; }
+  </style>
+</head>
+<body>
+<aside class="sidebar">
+  <img th:src="@{/images/logo.png}" alt="Logo CID" class="logo" />
+  <ul class="nav-links">
+    <li><a href="/dashbord_agent_archivage">Tableau de bord</a></li>
+    <li><a href="/archives/agent">Liste des archives</a></li>
+    <li><a href="/archives/ajouter">Saisir fiche archive</a></li>
+    <li><a href="/bibliotheques/ajouter" class="active">Saisir fiche bibliothèque</a></li>
+    <li><a href="/bibliotheques/agent">Liste biblio</a></li>
+    <li><a href="/recevoir-formulaire">Recevoir formulaire</a></li>
+    <li><a href="/gestion-heatmap">Gestion de salle d’archive</a></li>
+  </ul>
+  <form th:action="@{/logout}" method="post">
+    <button class="logout">Déconnexion</button>
+  </form>
+</aside>
+
+<main class="main">
+  <div th:if="${successMessage}" style="background:#d4edda; color:#155724; padding:10px 20px; border-radius:5px; border:1px solid #c3e6cb; margin-bottom:20px;">
+    <span th:text="${successMessage}"></span>
+  </div>
+  <div th:if="${errorMessage}" style="background:#f8d7da; color:#721c24; padding:10px 20px; border-radius:5px; border:1px solid #f5c6cb; margin-bottom:20px;">
+    <span th:text="${errorMessage}"></span>
+  </div>
+
+  <h1>Saisir une fiche bibliothèque</h1>
+  <p class="lead">Enregistrez une nouvelle fiche de bibliothèque dans la base.</p>
+
+  <form th:action="@{/bibliotheques/enregistrer}" th:object="${bibliotheque}" method="post" enctype="multipart/form-data">
+    <div class="section">
+      <h2>Informations générales</h2>
+      <div class="form-group">
+        <label for="title">Titre</label>
+        <input type="text" id="title" th:field="*{title}" required />
+      </div>
+      <div class="form-group">
+        <label for="author">Auteur</label>
+        <input type="text" id="author" th:field="*{author}" required />
+      </div>
+      <div class="form-group">
+        <label for="dateCreation">Date de création</label>
+        <input type="date" id="dateCreation" th:field="*{dateCreation}" required />
+      </div>
+      <div class="form-group">
+        <label for="category">Catégorie</label>
+        <select id="category" th:field="*{category}">
+          <option value="Manuel">Manuel</option>
+          <option value="Guide">Guide</option>
+          <option value="Référence">Référence</option>
+          <option value="Rapport">Rapport</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="summary">Résumé</label>
+        <textarea id="summary" th:field="*{summary}" rows="3"></textarea>
+      </div>
+      <div class="form-group">
+        <label for="file">Fichier (PDF/Doc)</label>
+        <input type="file" id="file" name="file" />
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn">Enregistrer</button>
+    </div>
+  </form>
+</main>
+</body>
+</html>

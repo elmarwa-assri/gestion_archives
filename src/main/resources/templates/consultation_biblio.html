@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Fiches bibliothèque – CID</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    /* Reset & base */
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family:'Roboto',sans-serif;
+      display:flex; min-height:100vh;
+      background:#f0f2f5; color:#333;
+    }
+    /* Sidebar */
+    .sidebar {
+      width:250px; background:#fff;
+      box-shadow:2px 0 5px rgba(0,0,0,0.1);
+      display:flex; flex-direction:column; align-items:center;
+      padding:30px 0;
+    }
+    .sidebar .logo {
+      width:120px; margin-bottom:40px;
+    }
+    .sidebar .nav-links {
+      list-style:none; width:100%; flex:1;
+    }
+    .sidebar .nav-links li a {
+      display:block; padding:15px 25px;
+      color:#333; text-decoration:none; font-weight:500;
+      transition:background 0.3s;
+    }
+    .sidebar .nav-links li a.active,
+    .sidebar .nav-links li a:hover {
+      background:#f0f0f0;
+    }
+    .sidebar .logout {
+      margin:20px; padding:10px 20px;
+      background:#f28c1c; color:#fff;
+      border:none; border-radius:5px;
+      font-weight:700; cursor:pointer;
+      transition:background 0.3s;
+    }
+    .sidebar .logout:hover { background:#e67300; }
+
+    /* Main area */
+    .main {
+      flex:1; padding:40px; overflow-y:auto;
+    }
+    .main h1 {
+      font-size:2rem; color:#00539c; margin-bottom:10px;
+    }
+    .main p.lead {
+      font-size:1rem; margin-bottom:25px;
+    }
+
+    /* Toolbar */
+    .toolbar {
+      display:flex; gap:10px; align-items:center;
+      margin-bottom:20px;
+    }
+    .toolbar .search {
+      flex:1; padding:10px 15px;
+      border:1px solid #ccc; border-radius:5px;
+      font-size:0.95rem;
+    }
+    .toolbar .btn-search,
+    .toolbar .btn-export {
+      padding:10px 20px; color:#fff; border:none;
+      border-radius:5px; font-weight:700; cursor:pointer;
+      transition:background 0.3s;
+    }
+    .toolbar .btn-search {
+      background:#47a5dc;
+    }
+    .toolbar .btn-search:hover {
+      background:#268bbd;
+    }
+    .toolbar .btn-export {
+      background:#f28c1c;
+    }
+    .toolbar .btn-export:hover {
+      background:#e67300;
+    }
+
+    /* Table */
+    table {
+      width:100%; border-collapse:collapse;
+      background:#fff; box-shadow:0 4px 10px rgba(0,0,0,0.05);
+    }
+    th, td {
+      padding:15px; text-align:left; border-bottom:1px solid #eee;
+    }
+    th {
+      background:#00539c; color:#fff; font-weight:500;
+    }
+    tbody tr:hover {
+      background:#f9f9f9;
+    }
+    .btn-download {
+      padding:6px 12px; background:#00539c;
+      color:#fff; border:none; border-radius:4px;
+      font-size:0.9rem; cursor:pointer;
+      transition:background 0.3s;
+    }
+    .btn-download:hover {
+      background:#003f7d;
+    }
+  </style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <img src="./logo.png" alt="Logo CID" class="logo" />
+    <ul class="nav-links">
+      <li><a href="/admin-dashboard">Tableau de bord</a></li>
+      <li><a href="/gestion-users">Utilisateurs</a></li>
+      <li><a href="/gestion-role">Rôles & perms</a></li>
+      <li><a href="/consultation-archive">Archives</a></li>
+      <li><a href="/consultation-biblio" class="active">Bibliothèque</a></li>
+    </ul>
+    <button class="logout">Déconnexion</button>
+  </aside>
+
+  <main class="main">
+    <h1>Fiches bibliothèque</h1>
+    <p class="lead">
+      Accédez à toutes les fiches de bibliothèque, filtrez par mot-clé et téléchargez-les si nécessaire.
+    </p>
+
+    <div class="toolbar">
+      <input type="text" id="search-term" class="search" placeholder="Recherche mot-clé…" />
+      <button id="btn-search" class="btn-search">Rechercher</button>
+      <button id="btn-export" class="btn-export">Exporter</button>
+    </div>
+
+    <table id="biblio-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Titre</th>
+          <th>Auteur</th>
+          <th>Date</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>2001</td>
+          <td>Guide des archives</td>
+          <td>Élodie Faure</td>
+          <td>2024-11-05</td>
+          <td><button class="btn-download">Télécharger</button></td>
+        </tr>
+        <tr>
+          <td>2002</td>
+          <td>Index documentaire</td>
+          <td>Lucas Rey</td>
+          <td>2025-02-12</td>
+          <td><button class="btn-download">Télécharger</button></td>
+        </tr>
+        <tr>
+          <td>2003</td>
+          <td>Catalogue thématique</td>
+          <td>Sarah Benali</td>
+          <td>2025-05-30</td>
+          <td><button class="btn-download">Télécharger</button></td>
+        </tr>
+        <!-- … -->
+      </tbody>
+    </table>
+  </main>
+
+  <script>
+    const tableBody = document.querySelector('#biblio-table tbody');
+    const btnSearch = document.getElementById('btn-search');
+    const txtSearch = document.getElementById('search-term');
+    const btnExport = document.getElementById('btn-export');
+
+    // Filtrer par mot-clé
+    btnSearch.addEventListener('click', () => {
+      const term = txtSearch.value.toLowerCase();
+      tableBody.querySelectorAll('tr').forEach(tr => {
+        const title = tr.children[1].textContent.toLowerCase();
+        tr.style.display = title.includes(term) ? '' : 'none';
+      });
+    });
+
+    // Exporter (placeholder)
+    btnExport.addEventListener('click', () => {
+      alert('Export des fiches bibliothèque en cours…');
+      // Ajoutez ici la logique d’export (CSV/PDF…)
+    });
+
+    // Télécharger fiche
+    document.querySelectorAll('.btn-download').forEach(btn => {
+      btn.addEventListener('click', () => {
+        alert('Téléchargement de la fiche…');
+      });
+    });
+  </script>
+  <script>
+    document.querySelector('.logout').addEventListener('click', function () {
+      // Si tu utilises localStorage/sessionStorage :
+      // localStorage.clear();
+      // sessionStorage.clear();
+      window.location.href = '/login';
+    });
+  </script>
+
+</body>
+</html>

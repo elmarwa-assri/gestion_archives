@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Connexion – Gestion des Archives CID</title>
+  <style>
+    :root {
+      --clr-bg: #073A87; --clr-dark: #114168; --clr-light: #70A0C8;
+      --clr-alt1: #F59201; --clr-alt2: #F8B629; --txt-light: rgba(255,255,255,0.9);
+      --txt-strong: #fff; --alt1-rgb: 245,146,1; --overlay-alpha1: rgba(var(--alt1-rgb),0.2);
+      --overlay-alpha2: rgba(var(--alt1-rgb),0.15);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, var(--clr-dark) 0%, var(--clr-light) 70%);
+      height: 100vh; display: flex; align-items: center; justify-content: center;
+      position: relative; color: var(--txt-strong); overflow: hidden;
+    }
+    .overlay-circle { position: absolute; border-radius: 50%; z-index: 1; }
+    .circle-1 { width: 300px; height: 300px; top: 10%; right: 10%; background: var(--overlay-alpha1); }
+    .circle-2 { width: 200px; height: 200px; bottom: 15%; left: 15%; background: var(--overlay-alpha2); }
+    .login-box {
+      position: relative; z-index: 2; background: rgba(255,255,255,0.95);
+      padding: 40px; max-width: 400px; width: 100%; border-radius: 10px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1); text-align: center;
+    }
+    .login-box .logo { width: 120px; margin-bottom: 20px; filter: drop-shadow(0 10px 20px rgba(var(--alt1-rgb),0.3)); }
+    .login-box h1 { font-size: 2rem; color: var(--clr-alt2); margin-bottom: 25px; }
+    .form-group { margin-bottom: 20px; text-align: left; }
+    .form-group label { display: block; margin-bottom: 8px; font-weight: 500; color: #333; }
+    .form-group input {
+      width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 5px;
+      font-size: 1rem; transition: border-color .3s ease;
+    }
+    .form-group input:focus { outline: none; border-color: var(--clr-dark); }
+    .btn {
+      display: inline-block; width: 100%; padding: 12px; font-size: 1rem; font-weight: 700; color: #fff;
+      background: linear-gradient(135deg, var(--clr-alt1), var(--clr-alt2)); border: none; border-radius: 5px;
+      cursor: pointer; transition: background-color .3s ease, transform .2s ease;
+    }
+    .btn:hover { background-color: #e67300; transform: translateY(-2px); }
+    .extras { margin-top: 15px; font-size: .9rem; color: #333; }
+    .extras a { color: var(--clr-dark); text-decoration: none; transition: color .3s ease; }
+    .extras a:hover { color: var(--clr-bg); }
+    .error-message { color: red; margin-bottom: 15px; font-size: 0.95rem; }
+  </style>
+</head>
+<body>
+
+<div class="overlay-circle circle-1"></div>
+<div class="overlay-circle circle-2"></div>
+
+<div class="login-box">
+  <!-- IMPORTANT : utiliser th:src pour respecter le context-path -->
+  <img th:src="@{/images/logo.png}" alt="Logo CID" class="logo"/>
+  <h1>Connexion</h1>
+
+  <div class="error-message" th:if="${param.error}">
+    Email ou mot de passe incorrect.
+  </div>
+
+  <form th:action="@{/login}" method="post" autocomplete="on">
+    <div class="form-group">
+      <label for="username">Adresse e-mail</label>
+      <input type="text" id="username" name="username" placeholder="votre@exemple.com" required autocomplete="username"/>
+    </div>
+    <div class="form-group">
+      <label for="password">Mot de passe</label>
+      <input type="password" id="password" name="password" placeholder="••••••••" required autocomplete="current-password"/>
+    </div>
+    <button type="submit" class="btn">Se connecter</button>
+  </form>
+
+  <div class="extras">
+    <!-- Si remember-me activé : name="remember-me" -->
+    <p>
+      <input type="checkbox" id="remember" name="remember-me"/>
+      <label for="remember">Se souvenir de moi</label>
+    </p>
+    <p><a th:href="@{/reset-password}">Mot de passe oublié ?</a></p>
+  </div>
+</div>
+
+</body>
+</html>

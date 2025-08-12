@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tableau de bord – Cadre administratif</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box }
+    body {
+      font-family:'Roboto',sans-serif;
+      display:flex; min-height:100vh;
+      background:#f0f2f5; color:#555;
+    }
+    /* Sidebar */
+    .sidebar {
+      width:250px; background:#fff;
+      box-shadow:2px 0 5px rgba(0,0,0,0.1);
+      display:flex; flex-direction:column; align-items:center;
+      padding:30px 0;
+    }
+    .sidebar .logo { width:120px; margin-bottom:40px }
+    .sidebar .nav-links { list-style:none; width:100%; flex:1 }
+    .sidebar .nav-links li a {
+      display:block; padding:15px 25px; color:#333;
+      text-decoration:none; font-weight:500;
+      transition:background .3s;
+    }
+    .sidebar .nav-links li a.active,
+    .sidebar .nav-links li a:hover { background:#f0f0f0 }
+    .sidebar .logout {
+      margin:20px; padding:10px 20px; background:#f28c1c;
+      color:#fff; border:none; border-radius:5px;
+      font-weight:700; cursor:pointer; transition:background .3s;
+    }
+    .sidebar .logout:hover { background:#e67300 }
+
+    /* Main (centred) */
+    .main {
+      flex:1; display:flex; flex-direction:column;
+      justify-content:center; align-items:center;
+      padding:40px; text-align:center;
+    }
+    .main h1 {
+      font-size:2.5rem; color:#00539c; margin-bottom:10px;
+    }
+    .main p {
+      font-size:1.1rem; margin-bottom:30px;
+      max-width:600px;
+    }
+
+    /* Cards */
+    .cards {
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(280px,1fr));
+      gap:20px;
+      width:100%; max-width:800px;
+    }
+    .card {
+      background:#fff; border-radius:10px; padding:30px;
+      box-shadow:0 4px 10px rgba(0,0,0,0.05);
+      display:flex; flex-direction:column; justify-content:space-between;
+      aspect-ratio:1/1; overflow:hidden;
+    }
+    .card h2 {
+      color:#00539c; font-size:1.5rem; margin-bottom:15px;
+    }
+    .card p {
+      flex:1; font-size:1rem; line-height:1.4; color:#555;
+      margin-bottom:20px;
+    }
+    .card a {
+      display:block; text-align:center; padding:12px;
+      background:#f28c1c; color:#fff;
+      text-decoration:none; border-radius:5px;
+      font-weight:700; transition:background .3s,transform .2s;
+    }
+    .card a:hover {
+      background:#e67300; transform:translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <img src="./logo.png" alt="Logo CID" class="logo" />
+    <ul class="nav-links">
+      <li><a href="/dashbord_cadre" class="active">Tableau de bord</a></li>
+      <li><a href="/formulaire-cadre">Formulaire de projet à archiver</a></li>
+      <li><a href="/consulter-cadre">Consulter fiches de son pôle</a></li>
+    </ul>
+    <button class="logout">Déconnexion</button>
+  </aside>
+
+  <main class="main">
+    <h1>Bienvenue, Cadre administratif</h1>
+    <p>
+      Gérez vos projets à archiver et consultez les fiches de votre pôle en un clic.
+    </p>
+
+    <div class="cards">
+      <div class="card">
+        <h2>Formulaire de projet à archiver</h2>
+        <p>
+          Saisissez tous les détails de votre projet : titre, code, département, nature,
+          résumé, listes dynamiques, cotes, puis envoyez le formulaire à l’agent d’archivage.
+        </p>
+        <a href="/formulaire-cadre">Ouvrir le formulaire</a>
+      </div>
+      <div class="card">
+        <h2>Consulter fiches de son pôle</h2>
+        <p>
+          Parcourez l’ensemble des communes d’archives de votre division : filtrez,
+          recherchez et consultez chaque fiche.
+        </p>
+        <a href="/consulter-cadre">Accéder</a>
+      </div>
+    </div>
+  </main>
+  <script>
+    document.querySelector('.logout').addEventListener('click', function () {
+      // Si tu utilises localStorage/sessionStorage :
+      // localStorage.clear();
+      // sessionStorage.clear();
+      window.location.href = '/login';
+    });
+  </script>
+
+</body>
+</html>
+

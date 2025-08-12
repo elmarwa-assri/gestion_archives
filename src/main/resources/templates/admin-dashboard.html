@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Dashboard Admin – CID</title>
+  <style>
+    :root {
+      --clr-light:    #70A0C8;
+      --clr-bg:       #073A87;
+      --clr-alt1:     #F59201;
+      --clr-alt2:     #F8B629;
+      --txt-strong:   #fff;
+      --shadow-light: rgba(0,0,0,0.05);
+      --sidebar-bg:   #e0e0e0;
+      --sidebar-text: #333;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      display:flex; height:100vh;
+      font-family:'Inter',sans-serif;
+      background:var(--clr-light); color:#333;
+    }
+    /* Sidebar */
+    .sidebar {
+      width:260px;
+      background:var(--sidebar-bg);
+      display:flex; flex-direction:column; align-items:center;
+      padding:30px 0; box-shadow:2px 0 5px rgba(0,0,0,0.1);
+    }
+    .sidebar .logo { width:140px; margin-bottom:40px; }
+    .nav-links { list-style:none; width:100%; flex:1; }
+    .nav-links a {
+      display:block; padding:15px 30px;
+      color:var(--sidebar-text); text-decoration:none;
+      font-weight:500; transition:background .3s;
+    }
+    .nav-links a.active,
+    .nav-links a:hover { background:rgba(0,0,0,0.05); }
+    .logout {
+      margin:20px 0; padding:12px 20px;
+      background:linear-gradient(135deg,var(--clr-alt1),var(--clr-alt2));
+      color:var(--txt-strong); border:none; border-radius:5px;
+      font-weight:700; cursor:pointer; transition:transform .2s;
+    }
+    .logout:hover { transform:translateY(-2px); }
+
+    /* Main */
+    .main {
+      flex:1; padding:40px; overflow-y:auto;
+      background:#f7f9fc;
+    }
+    .main h1 { font-size:2.5rem; color:var(--clr-bg); margin-bottom:10px; }
+    .main p.lead { font-size:1.1rem; margin-bottom:20px; color:#555; }
+
+    /* Admin info */
+    .admin-info {
+      display:flex; align-items:center;
+      background:#fff; padding:20px;
+      border-radius:10px; box-shadow:0 4px 10px var(--shadow-light);
+      margin-bottom:30px;
+    }
+    .admin-avatar {
+      width:80px; height:80px; border-radius:50%; object-fit:cover;
+      margin-right:20px; border:2px solid var(--clr-bg);
+    }
+    .admin-details h3 { margin-bottom:5px; color:var(--clr-bg); font-size:1.25rem; }
+    .admin-details p { margin-bottom:4px; color:#555; font-size:0.95rem; }
+
+    /* Chart containers */
+    #heatmap, #chart {
+      width:100%; background:#fff;
+      border-radius:10px; box-shadow:0 4px 10px var(--shadow-light);
+      margin-bottom:30px;
+    }
+    #heatmap { height:400px; }
+    #chart   { height:350px; }
+
+    /* Action cards */
+    .cards {
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+      gap:20px; margin-top:20px;
+    }
+    .card {
+      background:#fff; border-radius:10px; padding:20px;
+      box-shadow:0 4px 10px var(--shadow-light);
+      display:flex; flex-direction:column; justify-content:space-between;
+    }
+    .card h2 { font-size:1.2rem; color:var(--clr-bg); margin-bottom:10px; text-align:center; }
+    .card p { flex:1; font-size:0.95rem; line-height:1.4; color:#555; margin-bottom:15px; }
+    .card a {
+      display:inline-block; text-align:center; padding:10px;
+      background:linear-gradient(135deg,var(--clr-alt1),var(--clr-alt2));
+      color:var(--txt-strong); text-decoration:none; border-radius:5px;
+      font-weight:700; transition:transform .2s;
+    }
+    .card a:hover { transform:translateY(-2px); }
+  </style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <img src="./logo.png" alt="Logo CID" class="logo"/>
+    <ul class="nav-links">
+      <li><a href="/admin-dashboard" class="active">Tableau de bord</a></li>
+      <li><a href="/gestion-users">Utilisateurs</a></li>
+      <li><a href="/gestion-role">Rôles & perms</a></li>
+      <li><a href="/consultation-archive">Archives</a></li>
+      <li><a href="/consultation-biblio">Bibliothèque</a></li>
+    </ul>
+    <button class="logout">Déconnexion</button>
+  </aside>
+
+  <main class="main">
+    <h1>Bienvenue, Administrateur</h1>
+    <p class="lead">Tableau de bord — vue d’ensemble</p>
+
+    <!-- Informations administrateur -->
+    <div class="admin-info">
+      <img src="./profil.jpg" alt="Avatar Administrateur" class="admin-avatar"/>
+      <div class="admin-details">
+        <h3>Hamza Talidi</h3>
+        <p>Rôle : Administrateur</p>
+        <p>Email : hamza.talidi@cid.ma</p>
+      </div>
+    </div>
+
+    <!-- Heatmap ECharts: Rangs (lignes) et Armoires (colonnes) -->
+    <div id="heatmap"></div>
+
+    <!-- Graphique archives par mois -->
+    <div id="chart"></div>
+
+    <!-- Cartes des actions -->
+    <div class="cards">
+      <div class="card">
+        <h2>Utilisateurs</h2>
+        <p>Créez, modifiez ou supprimez des comptes utilisateur. Gérez leurs accès.</p>
+        <a href="/gestion-users">Gérer</a>
+      </div>
+      <div class="card">
+        <h2>Rôles & permissions</h2>
+        <p>Définissez de nouveaux rôles, attribuez des permissions et ajustez les droits.</p>
+        <a href="gestion-role">Gérer</a>
+      </div>
+      <div class="card">
+        <h2>Archives</h2>
+        <p>Parcourez l’ensemble des archives, effectuez des recherches et exportez vos documents.</p>
+        <a href="consultation-archive">Consulter</a>
+      </div>
+      <div class="card">
+        <h2>Bibliothèque</h2>
+        <p>Accédez aux fiches, filtrez par mot‑clé et téléchargez‑les si nécessaire.</p>
+        <a href="consultation-biblio">Consulter</a>
+      </div>
+    </div>
+  </main>
+
+  <!-- Librairies JS -->
+  <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+  <!-- Heatmap script modifié pour n'afficher que le nombre de boîtes -->
+  <script>
+    var chartDom = document.getElementById('heatmap');
+    var myChart = echarts.init(chartDom);
+    var ranks = ['Rang 1','Rang 2','Rang 3','Rang 4','Rang 5','Rang 6','Rang 7'];
+    var cabinets = ['Armoire A','Armoire B','Armoire C','Armoire D','Armoire E','Armoire F','Armoire G'];
+    var data = [];
+    for (var i = 0; i < ranks.length; i++) {
+      for (var j = 0; j < cabinets.length; j++) {
+        data.push([j, i, Math.round(Math.random() * 20)]);
+      }
+    }
+    var option = {
+      tooltip: {
+        position: 'top',
+        formatter: function(params) {
+          return ranks[params.value[1]] + ' / ' + cabinets[params.value[0]] + '<br/>Boîtes : ' + params.value[2];
+        }
+      },
+      grid: { height: '50%', top: '10%' },
+      xAxis: { type: 'category', data: cabinets, splitArea: { show: true } },
+      yAxis: { type: 'category', data: ranks, splitArea: { show: true } },
+      visualMap: {
+        min: 0, max: 20, calculable: true,
+        orient: 'horizontal', left: 'center', bottom: '15%',
+        inRange: { color: ['#E0F3F8', '#0868AC'] },
+        formatter: function(val) { return val + ' boîtes'; }
+      },
+      series: [{
+        name: 'Boîtes', type: 'heatmap', data: data,
+        label: {
+          show: true,
+          formatter: function(params) { return params.value[2]; }
+        },
+        emphasis: {
+          itemStyle: {
+            shadowBlur: 10,
+            shadowColor: 'rgba(0,0,0,0.5)'
+          }
+        }
+      }]
+    };
+    myChart.setOption(option);
+    myChart.on('click', function(params) {
+      if (params.seriesType === 'heatmap') {
+        var rang = ranks[params.value[1]];
+        var cabinet = cabinets[params.value[0]];
+        var val = params.value[2];
+        alert('Emplacement : ' + rang + ' / ' + cabinet + '\nNombre de boîtes : ' + val);
+      }
+    });
+  </script>
+
+  <!-- Archives par mois script -->
+  <script>
+    var options = {
+      series: [{ name:'Archives', data:[10,41,35,51,49,62,69,91,148] }],
+      chart: { height:350, type:'line', zoom:{ enabled:false } },
+      dataLabels: { enabled:false },
+      stroke: { curve:'straight' },
+      title: { text:'Archives par mois', align:'left' },
+      grid: { row:{ colors:['#f3f3f3','transparent'], opacity:0.5 } },
+      xaxis: { categories:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep'] }
+    };
+    new ApexCharts(document.querySelector('#chart'), options).render();
+  </script>
+  <script>
+    document.querySelector('.logout').addEventListener('click', function () {
+      // Si tu utilises localStorage/sessionStorage :
+      // localStorage.clear();
+      // sessionStorage.clear();
+      window.location.href = '/login';
+    });
+  </script>
+</body>
+</html>

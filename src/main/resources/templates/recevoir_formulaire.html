@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Recevoir formulaire en ligne – CID</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
+    /* Reset & base */
+    * { margin:0; padding:0; box-sizing:border-box }
+
+    /* Couleurs de texte */
+    body {
+      font-family:'Roboto',sans-serif;
+      display:flex; min-height:100vh;
+      background:#f0f2f5;
+      color:#555;                /* Gris foncé pour le texte courant */
+    }
+    .main h1,
+    .form-add h2,
+    .section h3,
+    th {
+      color:#00539c;             /* Titres en bleu CID */
+    }
+    .form-group label,
+    .list-section th,
+    .list-section td,
+    td,
+    label {
+      color:#333;                /* Labels et cellules en gris presque noir */
+    }
+    input,
+    select,
+    textarea {
+      color:#333;                /* Saisie en gris presque noir */
+    }
+    input::placeholder,
+    textarea::placeholder {
+      color:#999;                /* Placeholder en gris clair */
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width:250px; background:#fff; box-shadow:2px 0 5px rgba(0,0,0,0.1);
+      display:flex; flex-direction:column; align-items:center; padding:30px 0;
+    }
+    .sidebar .logo { width:120px; margin-bottom:40px }
+    .sidebar .nav-links { list-style:none; width:100%; flex:1 }
+    .sidebar .nav-links li a {
+      display:block; padding:15px 25px; color:#333; text-decoration:none;
+      font-weight:500; transition:background .3s;
+    }
+    .sidebar .nav-links li a.active,
+    .sidebar .nav-links li a:hover {
+      background:#f0f0f0;
+    }
+    .sidebar .logout {
+      margin:20px; padding:10px 20px; background:#f28c1c; color:#fff;
+      border:none; border-radius:5px; font-weight:700; cursor:pointer;
+      transition:background .3s;
+    }
+    .sidebar .logout:hover { background:#e67300 }
+
+    /* Main */
+    .main {
+      flex:1; padding:40px; overflow-y:auto;
+    }
+    .main h1 { font-size:2rem; margin-bottom:10px }
+    .main p.lead { font-size:1rem; margin-bottom:25px }
+
+    /* Toolbar */
+    .toolbar {
+      display:flex; gap:10px; align-items:center; margin-bottom:20px;
+    }
+    .toolbar .search {
+      flex:1; padding:10px 15px; border:1px solid #ccc;
+      border-radius:5px; font-size:0.95rem;
+    }
+    .toolbar .btn-search {
+      padding:10px 20px; background:#47a5dc; color:#fff;
+      border:none; border-radius:5px; font-weight:700; cursor:pointer;
+      transition:background .3s;
+    }
+    .toolbar .btn-search:hover { background:#268bbd }
+
+    /* Table */
+    table {
+      width:100%; border-collapse:collapse;
+      background:#fff; box-shadow:0 4px 10px rgba(0,0,0,0.05);
+    }
+    th, td {
+      padding:15px; text-align:left; border-bottom:1px solid #eee;
+    }
+    th { font-weight:500 }
+    tbody tr:hover { background:#f9f9f9 }
+    .btn-saisir, .btn-download {
+      padding:6px 12px; border:none; border-radius:4px;
+      font-size:0.9rem; cursor:pointer; transition:background .3s;
+    }
+    .btn-saisir { background:#f28c1c; color:#fff; margin-right:6px }
+    .btn-saisir:hover { background:#e67300 }
+    .btn-download { background:#47a5dc; color:#fff }
+    .btn-download:hover { background:#268bbd }
+
+    /* Modal */
+    .form-container {
+      display:none; background:rgba(0,0,0,0.4);
+      position:fixed; top:0; left:0; width:100%; height:100%;
+      align-items:center; justify-content:center; z-index:100;
+    }
+    .form-add {
+      background:#fff; padding:30px; border-radius:8px;
+      box-shadow:0 4px 10px rgba(0,0,0,0.2);
+      width:100%; max-width:900px; max-height:90vh;
+      overflow-y:auto; position:relative;
+    }
+    .form-add .close {
+      position:absolute; top:15px; right:15px;
+      background:transparent; border:none;
+      font-size:1.2rem; cursor:pointer; color:#333;
+    }
+
+    .section {
+      background:#fafafa; padding:20px; margin-bottom:20px;
+      border-radius:5px;
+    }
+    .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:20px }
+    .grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:20px }
+
+    .form-group { margin-bottom:15px }
+    .form-group label { display:block; margin-bottom:5px; font-weight:500 }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width:100%; padding:10px; border:1px solid #ccc;
+      border-radius:4px; font-size:1rem;
+      transition:border-color .3s;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color:#00539c; outline:none;
+    }
+
+    .list-section table {
+      width:100%; border-collapse:collapse;
+      background:#fff; margin-bottom:10px;
+    }
+    .list-section th, .list-section td {
+      border:1px solid #ddd; padding:8px; font-size:0.9rem;
+    }
+    .list-section th { background:#eee; font-weight:600 }
+
+    .btn-add {
+      margin-top:5px; padding:6px 12px;
+      background:#47a5dc; color:#fff; border:none;
+      border-radius:4px; font-size:0.9rem; cursor:pointer;
+      transition:background .3s;
+    }
+    .btn-add:hover { background:#268bbd }
+
+    .form-actions {
+      text-align:right; margin-top:20px;
+    }
+    .form-actions .btn {
+      padding:10px 25px; background:#f28c1c; color:#fff;
+      border:none; border-radius:5px; font-weight:700;
+      cursor:pointer; transition:background .3s,transform .2s;
+    }
+    .form-actions .btn:hover {
+      background:#e67300; transform:translateY(-1px);
+    }
+  </style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <img src="./logo.png" alt="Logo CID" class="logo" />
+    <ul class="nav-links">
+      <li><a href="/dashbord_agent_archivage">Tableau de bord</a></li>
+      <li><a href="/archives/agent">Liste des archives</a></li>
+      <li><a href="/archives/ajouter">Saisir fiche archive</a></li>
+      <li><a href="/saisie-biblio">Saisir fiche bibliothèque</a></li>
+      <li><a href="/recevoir-formulaire" class="active">Recevoir formulaire</a></li>
+      <li><a href="/gestion-heatmap">Gestion de salle d’archive</a></li>
+    </ul>
+    <button class="logout">Déconnexion</button>
+  </aside>
+
+  <main class="main">
+    <h1>Recevoir formulaire en ligne</h1>
+    <p class="lead">Affichez et saisissez les formulaires envoyés par les cadres.</p>
+
+    <div class="toolbar">
+      <input type="text" id="search-term" class="search" placeholder="Rechercher un formulaire…" />
+      <button id="btn-search" class="btn-search">Rechercher</button>
+    </div>
+
+    <table id="forms-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Date réception</th>
+          <th>Expéditeur</th>
+          <th>Objet</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>F-001</td>
+          <td>2025-06-10</td>
+          <td>Jean Dupont</td>
+          <td>TRAVAUX DE RÉALISATION DE LA 1ERE TRANCHE…</td>
+          <td>
+            <button class="btn-saisir">Saisir</button>
+            <button class="btn-download">Télécharger</button>
+          </td>
+        </tr>
+        <!-- ... autres formulaires ... -->
+      </tbody>
+    </table>
+  </main>
+
+  <!-- Modal Saisie Fiche Archive -->
+  <div class="form-container" id="form-container">
+    <div class="form-add">
+      <button class="close" id="close-modal">&times;</button>
+      <h2>Saisir une fiche d’archive</h2>
+      <form id="archive-form">
+        <!-- Informations générales -->
+        <div class="section">
+          <h3>Informations générales</h3>
+          <div class="form-group">
+            <label for="archive-titre">Titre</label>
+            <input type="text" id="archive-titre" name="titre" />
+          </div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label for="archive-code">Code affaire</label>
+              <input type="text" id="archive-code" name="code_affaire" />
+            </div>
+            <div class="form-group">
+              <label for="archive-date-ed">Date édition</label>
+              <input type="date" id="archive-date-ed" name="date_edition" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Archives -->
+        <div class="section">
+          <h3>Archives</h3>
+          <div class="grid-3">
+            <div class="form-group">
+              <label for="archive-dept">Département</label>
+              <select id="archive-dept" name="departement">
+                <option>EEP</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="archive-nature">Nature</label>
+              <select id="archive-nature" name="nature">
+                <option>RAPPORT(s) &amp; PLAN</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="archive-stade">Stade étude</label>
+              <select id="archive-stade" name="stade"><option></option></select>
+            </div>
+          </div>
+          <div class="grid-3">
+            <div class="form-group">
+              <label for="archive-etat">État</label>
+              <select id="archive-etat" name="etat"><option></option></select>
+            </div>
+            <div class="form-group">
+              <label for="archive-date-el">Date élimination</label>
+              <input type="date" id="archive-date-el" name="date_elimination" />
+            </div>
+            <div></div>
+          </div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label for="archive-nomf">Nom fichier</label>
+              <input type="text" id="archive-nomf" name="nom_fichier" />
+            </div>
+            <div class="form-group">
+              <label for="archive-client">Client</label>
+              <select id="archive-client" name="client">
+                <option>DPDPM</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="archive-resume">Résumé</label>
+            <textarea id="archive-resume" name="resume" rows="4"></textarea>
+          </div>
+        </div>
+
+        <!-- Auteurs -->
+        <div class="section list-section">
+          <h3>Auteurs</h3>
+          <table id="table-auteurs">
+            <thead><tr><th>Auteur</th></tr></thead>
+            <tbody><tr><td><select><option></option></select></td></tr></tbody>
+          </table>
+          <button type="button" class="btn-add" onclick="addRow('table-auteurs')">+ Ajouter un auteur</button>
+        </div>
+
+        <!-- Mots-clés -->
+        <div class="section list-section">
+          <h3>Mots-clés</h3>
+          <table id="table-mots">
+            <thead><tr><th>Mot clé</th></tr></thead>
+            <tbody><tr><td><input type="text" /></td></tr></tbody>
+          </table>
+          <button type="button" class="btn-add" onclick="addRow('table-mots')">+ Ajouter un mot-clé</button>
+        </div>
+
+        <!-- Ouvrages cités -->
+        <div class="section list-section">
+          <h3>Ouvrages cités</h3>
+          <table id="table-ouvrages">
+            <thead><tr><th>Titre</th></tr></thead>
+            <tbody><tr><td><input type="text" /></td></tr></tbody>
+          </table>
+          <button type="button" class="btn-add" onclick="addRow('table-ouvrages')">+ Ajouter un ouvrage</button>
+        </div>
+
+        <!-- Sujets traités -->
+        <div class="section list-section">
+          <h3>Sujets traités</h3>
+          <table id="table-sujets">
+            <thead><tr><th>Sujet</th></tr></thead>
+            <tbody><tr><td><input type="text" /></td></tr></tbody>
+          </table>
+          <button type="button" class="btn-add" onclick="addRow('table-sujets')">+ Ajouter un sujet</button>
+        </div>
+
+        <!-- Cotes -->
+        <div class="section list-section">
+          <h3>Cotes</h3>
+          <table id="table-cotes">
+            <thead>
+              <tr>
+                <th>Cote</th><th>Original</th><th>Date prêt</th>
+                <th>Ret. prévue</th><th>Emprunteur</th><th>Ret. effect.</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><input type="text" /></td>
+                <td><input type="checkbox" /></td>
+                <td><input type="date" /></td>
+                <td><input type="date" /></td>
+                <td><select><option></option></select></td>
+                <td><input type="date" /></td>
+              </tr>
+            </tbody>
+          </table>
+          <button type="button" class="btn-add" onclick="addRow('table-cotes')">+ Ajouter une cote</button>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function addRow(tableId) {
+      const tbl = document.getElementById(tableId).querySelector('tbody');
+      const newRow = tbl.rows[0].cloneNode(true);
+      newRow.querySelectorAll('input, select').forEach(i => {
+        if (i.type === 'checkbox') i.checked = false;
+        else i.value = '';
+      });
+      tbl.appendChild(newRow);
+    }
+
+    const fiches = {
+      'F-001': {
+        titre: 'TRAVAUX DE RÉALISATION DE LA 1ERE TRANCHE DU NOUVEAU PORT DE BOUDJOUR MISSION 4 : DAO',
+        code_affaire: '23420',
+        date_edition: '2004-03-31',
+        departement: 'EEP',
+        nature: 'RAPPORT(s) & PLAN',
+        stade: '',
+        etat: '',
+        date_elimination: '2024-03-31',
+        nom_fichier: '',
+        client: 'DPDPM',
+        resume: "Pièce A1 : RÈGLEMENT DE L'APPEL D'OFFRES + PIÈCE A3 : BORDEREAU DES PRIX + DÉTAIL ESTIMATIF + PIÈCE A5 : DONNÉES NATURELLES ET RENSEIGNEMENTS GÉOTECHNIQUES + PLANS"
+      }
+    };
+
+    const tableBody = document.querySelector('#forms-table tbody');
+    const btnSearch  = document.getElementById('btn-search');
+    const txt        = document.getElementById('search-term');
+    const modal      = document.getElementById('form-container');
+    const closeModal = document.getElementById('close-modal');
+
+    btnSearch.addEventListener('click', () => {
+      const term = txt.value.toLowerCase();
+      tableBody.querySelectorAll('tr').forEach(tr => {
+        tr.style.display = tr.textContent.toLowerCase().includes(term) ? '' : 'none';
+      });
+    });
+
+    tableBody.querySelectorAll('.btn-saisir').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.closest('tr').children[0].textContent;
+        const d  = fiches[id] || {};
+        document.getElementById('archive-titre').value       = d.titre || '';
+        document.getElementById('archive-code').value        = d.code_affaire || '';
+        document.getElementById('archive-date-ed').value     = d.date_edition || '';
+        document.getElementById('archive-dept').value        = d.departement || '';
+        document.getElementById('archive-nature').value      = d.nature || '';
+        document.getElementById('archive-stade').value       = d.stade || '';
+        document.getElementById('archive-etat').value        = d.etat || '';
+        document.getElementById('archive-date-el').value     = d.date_elimination || '';
+        document.getElementById('archive-nomf').value        = d.nom_fichier || '';
+        document.getElementById('archive-client').value      = d.client || '';
+        document.getElementById('archive-resume').value      = d.resume || '';
+        modal.style.display = 'flex';
+      });
+    });
+
+    closeModal.addEventListener('click', () => {
+      modal.style.display = 'none';
+    });
+  </script>
+  <script>
+    document.querySelector('.logout').addEventListener('click', function () {
+      // Si tu utilises localStorage/sessionStorage :
+      // localStorage.clear();
+      // sessionStorage.clear();
+      window.location.href = '/login';
+    });
+  </script>
+</body>
+</html>
+

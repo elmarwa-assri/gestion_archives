@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gestion Heatmap – Salle d'archives</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    /* Reset & base */
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family:'Roboto',sans-serif;
+      display:flex; min-height:100vh; background:#f0f2f5; color:#333;
+    }
+    /* Sidebar */
+    .sidebar {
+      width:250px; background:#fff;
+      box-shadow:2px 0 5px rgba(0,0,0,0.1);
+      display:flex; flex-direction:column; align-items:center;
+      padding:30px 0; position:fixed; top:0; bottom:0;
+    }
+    .sidebar .logo { width:120px; margin-bottom:40px; }
+    .sidebar .nav-links { list-style:none; width:100%; flex:1; }
+    .sidebar .nav-links li a {
+      display:block; padding:15px 25px;
+      color:#333; text-decoration:none; font-weight:500;
+      transition:background .3s;
+    }
+    .sidebar .nav-links li a.active,
+    .sidebar .nav-links li a:hover { background:#f0f0f0; }
+    .sidebar .logout {
+      margin:20px; padding:10px 20px;
+      background:#f28c1c; color:#fff;
+      border:none; border-radius:5px;
+      font-weight:700; cursor:pointer;
+      transition:background .3s;
+    }
+    .sidebar .logout:hover { background:#e67300; }
+    /* Main content */
+    .main {
+      margin-left:250px; padding:40px; flex:1; overflow-y:auto;
+    }
+    .main h1 { font-size:2rem; color:#00539c; margin-bottom:10px; }
+    .main p.lead { font-size:1rem; margin-bottom:25px; }
+    /* Heatmap container */
+    #room-heatmap {
+      width:100%; height:500px;
+      background:#fff; border-radius:10px;
+      box-shadow:0 4px 10px rgba(0,0,0,0.05);
+      margin-bottom:30px;
+    }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <img src="./logo.png" alt="Logo CID" class="logo" />
+    <ul class="nav-links">
+      <li><a href="/dashbord_agent_archivage">Tableau de bord</a></li>
+      <li><a href="/archives/agent">Liste des archives</a></li>
+      <li><a href="/archives/ajouter">Saisir fiche archive</a></li>
+      <li><a href="/saisie-biblio">Saisir fiche bibliothèque</a></li>
+      <li><a href="/recevoir-formulaire">Recevoir formulaire</a></li>
+      <li><a href="/gestion-heatmap" class="active">Gestion de salle d’archive</a></li>
+    </ul>
+    <button class="logout">Déconnexion</button>
+  </aside>
+
+  <main class="main">
+    <h1>Gestion de la salle d'archives</h1>
+    <p class="lead">La heatmap représente l’architecture de la salle : les lignes sont les couloirs, les colonnes sont les armoires. Cliquez sur une cellule pour modifier son statut.</p>
+    <div id="room-heatmap"></div>
+  </main>
+
+  <!-- ECharts -->
+  <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+  <script>
+    const dom = document.getElementById('room-heatmap');
+    const chart = echarts.init(dom);
+
+    // Définition des couloirs (lignes) et armoires (colonnes)
+    const aisles = ['Couloir 1','Couloir 2','Couloir 3','Couloir 4','Couloir 5'];
+    const cabinets = ['Armoire A','Armoire B','Armoire C','Armoire D','Armoire E'];
+
+    // Génération des données initiales (par défaut 0)
+    let data = [];
+    aisles.forEach((_, i) => {
+      cabinets.forEach((_, j) => {
+        data.push([j, i, 0]);
+      });
+    });
+
+    const option = {
+      tooltip: { position: 'top' },
+      grid: { height: '60%', top: '15%' },
+      xAxis: { type: 'category', data: cabinets, splitArea: { show: true } },
+      yAxis: { type: 'category', data: aisles, splitArea: { show: true } },
+      visualMap: {
+        min: 0, max: 10, calculable: true,
+        orient: 'horizontal', left: 'center', bottom: '5%'
+      },
+      series: [{
+        name: 'Statut', type: 'heatmap', data: data,
+        label: { show: true }, emphasis: { itemStyle: { shadowBlur: 10, shadowColor: 'rgba(0,0,0,0.5)' } }
+      }]
+    };
+
+    chart.setOption(option);
+
+    // Clic pour mettre à jour valeur
+    chart.on('click', params => {
+      if (params.componentType === 'series') {
+        const newVal = prompt(
+          `Statut pour ${params.name} - ${params.seriesName} (0-10):`,
+          params.value[2]
+        );
+        const valNum = parseInt(newVal, 10);
+        if (!isNaN(valNum)) {
+          // Met à jour la donnée correspondante
+          const idx = data.findIndex(d => d[0] === params.value[0] && d[1] === params.value[1]);
+          if (idx >= 0) {
+            data[idx][2] = valNum;
+            chart.setOption({ series: [{ data: data }] });
+          }
+        }
+      }
+    });
+  </script>
+  <script>
+    document.querySelector('.logout').addEventListener('click', function () {
+      // Si tu utilises localStorage/sessionStorage :
+      // localStorage.clear();
+      // sessionStorage.clear();
+      window.location.href = '/login';
+    });
+  </script>
+</body>
+</html>

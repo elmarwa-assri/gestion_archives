@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Liste des archives du pôle – CID</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
+    /* Reset & base */
+    * { margin:0; padding:0; box-sizing:border-box }
+    body {
+      font-family:'Roboto',sans-serif;
+      display:flex; min-height:100vh;
+      background:#f0f2f5; color:#555;
+    }
+        /* Sidebar */
+    .sidebar {
+      width:250px; background:#fff;
+      box-shadow:2px 0 5px rgba(0,0,0,0.1);
+      display:flex; flex-direction:column; align-items:center;
+      padding:30px 0;
+    }
+    .sidebar .logo {
+      width:120px; margin-bottom:40px;
+    }
+    .sidebar .nav-links {
+      list-style:none; width:100%; flex:1;
+    }
+    .sidebar .nav-links li a {
+      display:block; padding:15px 25px;
+      color:#333; text-decoration:none; font-weight:500;
+      transition:background .3s;
+    }
+    .sidebar .nav-links li a.active,
+    .sidebar .nav-links li a:hover {
+      background:#f0f0f0;
+    }
+    .sidebar .logout {
+      margin:20px; padding:10px 20px;
+      background:#f28c1c; color:#fff;
+      border:none; border-radius:5px;
+      font-weight:700; cursor:pointer;
+      transition:background .3s;
+    }
+    .sidebar .logout:hover {
+      background:#e67300;
+    }
+    /* Main */
+    .main {
+      flex:1; padding:40px; overflow-y:auto;
+    }
+    .main h1 {
+      font-size:2rem; color:#00539c; margin-bottom:10px;
+    }
+    .main p.lead {
+      font-size:1rem; margin-bottom:25px;
+    }
+    /* Toolbar */
+    .toolbar {
+      display:flex; flex-wrap:wrap; gap:10px; align-items:center;
+      margin-bottom:20px;
+    }
+    .toolbar .search,
+    .toolbar input[type="date"] {
+      padding:10px 15px; border:1px solid #ccc;
+      border-radius:5px; font-size:0.95rem;
+    }
+    .toolbar .search { flex:1; }
+    .toolbar .btn-search {
+      padding:10px 20px; background:#47a5dc;
+      color:#fff; border:none; border-radius:5px;
+      font-weight:700; cursor:pointer;
+      transition:background .3s;
+    }
+    .toolbar .btn-search:hover { background:#268bbd }
+
+    /* Table */
+    table {
+      width:100%; border-collapse:collapse;
+      background:#fff; box-shadow:0 4px 10px rgba(0,0,0,0.05);
+    }
+    th, td {
+      padding:15px; text-align:left; border-bottom:1px solid #eee;
+    }
+    th {
+      background:#00539c; color:#fff; font-weight:500;
+    }
+    tbody tr:hover { background:#f9f9f9 }
+    .btn-view {
+      padding:6px 12px; border:none; border-radius:4px;
+      font-size:0.9rem; cursor:pointer; transition:background .3s;
+      background:#47a5dc; color:#fff;
+    }
+    .btn-view:hover { background:#268bbd }
+  </style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <img src="./logo.png" alt="Logo CID" class="logo" />
+    <ul class="nav-links">
+      <li><a href="/dashbord_cadre">Tableau de bord</a></li>
+      <li><a href="/formulaire-cadre">Formulaire de projet à archiver</a></li>
+      <li><a href="/consulter-cadre" class="active">Consulter fiches de son pôle</a></li>
+    </ul>
+    <button class="logout">Déconnexion</button>
+  </aside>
+
+  <main class="main">
+    <h1>Liste des archives du pôle</h1>
+    <p class="lead">
+      Parcourez l’ensemble des archives de votre division (<strong id="current-pole">–</strong>), 
+      appliquez des filtres par mot-clé, date ou autres critères, et consultez chaque fiche.
+    </p>
+
+    <div class="toolbar">
+      <input type="text" id="search-term" class="search" placeholder="Recherche mot-clé…" />
+      <input type="date" id="date-from" />
+      <input type="date" id="date-to" />
+      <button id="btn-search" class="btn-search">Rechercher</button>
+    </div>
+
+    <table id="archives-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Document</th>
+          <th>Date</th>
+          <th>Auteur</th>
+          <th>Pôle</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1005</td>
+          <td>Rapport Pôle Énergie</td>
+          <td>2025-02-18</td>
+          <td>Ali Haddad</td>
+          <td>Énergie</td>
+          <td><button class="btn-view">Consulter</button></td>
+        </tr>
+        <tr>
+          <td>1012</td>
+          <td>Étude Pôle Eau</td>
+          <td>2025-03-22</td>
+          <td>Sofia Rahal</td>
+          <td>Eau</td>
+          <td><button class="btn-view">Consulter</button></td>
+        </tr>
+        <tr>
+          <td>1023</td>
+          <td>Bilan Pôle Énergie</td>
+          <td>2025-04-05</td>
+          <td>Karim Zouaoui</td>
+          <td>Énergie</td>
+          <td><button class="btn-view">Consulter</button></td>
+        </tr>
+        <!-- … autres archives … -->
+      </tbody>
+    </table>
+  </main>
+
+  <script>
+    const currentPole = 'Énergie'; // ajuster dynamiquement
+    document.getElementById('current-pole').textContent = currentPole;
+
+    const tableBody = document.querySelector('#archives-table tbody');
+    const btnSearch  = document.getElementById('btn-search');
+    const txt        = document.getElementById('search-term');
+    const from       = document.getElementById('date-from');
+    const to         = document.getElementById('date-to');
+
+    function filterByPole() {
+      tableBody.querySelectorAll('tr').forEach(tr => {
+        const pole = tr.children[4].textContent.trim();
+        tr.style.display = (pole === currentPole) ? '' : 'none';
+      });
+    }
+
+    function applyFilters() {
+      const term  = txt.value.toLowerCase();
+      const start = from.value;
+      const end   = to.value;
+      tableBody.querySelectorAll('tr').forEach(tr => {
+        if (tr.style.display === 'none') return;
+        const cols = tr.children;
+        const doc  = cols[1].textContent.toLowerCase();
+        const date = cols[2].textContent;
+        let show = true;
+        if (term  && !doc.includes(term))  show = false;
+        if (start && date < start)         show = false;
+        if (end   && date > end)           show = false;
+        tr.style.display = show ? '' : 'none';
+      });
+    }
+
+    filterByPole();
+    btnSearch.addEventListener('click', applyFilters);
+
+    tableBody.querySelectorAll('.btn-view').forEach(btn =>
+      btn.addEventListener('click', () => {
+        const id = btn.closest('tr').children[0].textContent;
+        window.location.href = `consulter-pole.html?id=${id}`;
+      })
+    );
+  </script>
+  <script>
+    document.querySelector('.logout').addEventListener('click', function () {
+      // Si tu utilises localStorage/sessionStorage :
+      // localStorage.clear();
+      // sessionStorage.clear();
+      window.location.href = '/login';
+    });
+  </script>
+
+</body>
+</html>

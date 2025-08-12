@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Rôles & Permissions – CID</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    /* Reset & base */
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family:'Roboto',sans-serif;
+      display:flex; min-height:100vh;
+      background:#f0f2f5; color:#333;
+    }
+    /* Sidebar */
+    .sidebar {
+      width:250px; background:#fff;
+      box-shadow:2px 0 5px rgba(0,0,0,0.1);
+      display:flex; flex-direction:column; align-items:center;
+      padding:30px 0;
+    }
+    .sidebar .logo {
+      width:120px; margin-bottom:40px;
+    }
+    .sidebar .nav-links {
+      list-style:none; width:100%; flex:1;
+    }
+    .sidebar .nav-links li a {
+      display:block; padding:15px 25px;
+      color:#333; text-decoration:none; font-weight:500;
+      transition:background 0.3s;
+    }
+    .sidebar .nav-links li a.active,
+    .sidebar .nav-links li a:hover {
+      background:#f0f0f0;
+    }
+    .sidebar .logout {
+      margin:20px; padding:10px 20px;
+      background:#f28c1c; color:#fff;
+      border:none; border-radius:5px;
+      font-weight:700; cursor:pointer;
+      transition:background 0.3s;
+    }
+    .sidebar .logout:hover { background:#e67300; }
+
+    /* Main area */
+    .main {
+      flex:1; padding:40px; overflow-y:auto;
+    }
+    .main h1 {
+      font-size:2rem; color:#00539c; margin-bottom:10px;
+    }
+    .main p.lead {
+      font-size:1rem; margin-bottom:25px;
+    }
+
+    /* Toolbar */
+    .toolbar {
+      display:flex; gap:10px; align-items:center;
+      margin-bottom:20px;
+    }
+    .toolbar .search {
+      flex:1; padding:10px 15px;
+      border:1px solid #ccc; border-radius:5px;
+      font-size:0.95rem;
+    }
+    .toolbar .btn-search {
+      padding:10px 20px; background:#47a5dc;
+      color:#fff; border:none; border-radius:5px;
+      font-weight:700; cursor:pointer;
+      transition:background 0.3s;
+    }
+    .toolbar .btn-search:hover { background:#268bbd; }
+
+    /* Table */
+    table {
+      width:100%; border-collapse:collapse;
+      background:#fff; box-shadow:0 4px 10px rgba(0,0,0,0.05);
+    }
+    th, td {
+      padding:15px; text-align:left; border-bottom:1px solid #eee;
+    }
+    th {
+      background:#00539c; color:#fff; font-weight:500;
+    }
+    tbody tr:hover { background:#f9f9f9; }
+    .btn-edit {
+      padding:6px 12px; border:none; border-radius:4px;
+      font-size:0.9rem; cursor:pointer;
+      background:#47a5dc; color:#fff;
+      transition:background 0.3s;
+    }
+    .btn-edit:hover { background:#268bbd; }
+
+    /* Modal overlay */
+    .form-container {
+      display:none; background:rgba(0,0,0,0.4);
+      position:fixed; top:0; left:0;
+      width:100%; height:100%;
+      align-items:center; justify-content:center;
+      z-index:100;
+    }
+    .form-add {
+      background:#fff; padding:30px;
+      border-radius:8px;
+      box-shadow:0 4px 10px rgba(0,0,0,0.2);
+      width:100%; max-width:600px;
+      position:relative;
+    }
+    .form-add h2 {
+      margin-bottom:15px; color:#00539c;
+      font-size:1.5rem;
+    }
+    .form-add .close {
+      position:absolute; top:15px; right:15px;
+      background:transparent; border:none;
+      font-size:1.2rem; cursor:pointer; color:#333;
+    }
+    .permissions {
+      list-style:none; margin-top:20px;
+      max-height:400px; overflow-y:auto;
+    }
+    .permissions li {
+      display:flex; align-items:flex-start;
+      padding:10px 0; border-bottom:1px solid #eee;
+    }
+    .permissions li:last-child { border-bottom:none; }
+    .permissions li input {
+      margin-right:15px; margin-top:4px;
+    }
+    .permissions li .desc {
+      font-size:0.9rem; color:#555; margin-top:4px;
+    }
+    .form-actions {
+      margin-top:20px; text-align:right;
+    }
+    .form-actions .btn {
+      padding:10px 20px; background:#f28c1c;
+      color:#fff; border:none; border-radius:5px;
+      font-weight:700; cursor:pointer;
+      transition:background 0.3s, transform 0.2s;
+    }
+    .form-actions .btn:hover {
+      background:#e67300; transform:translateY(-1px);
+    }
+  </style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <img src="./logo.png" alt="Logo CID" class="logo" />
+    <ul class="nav-links">
+      <li><a href="/admin-dashboard">Tableau de bord</a></li>
+      <li><a href="/gestion-users">Utilisateurs</a></li>
+      <li><a href="/gestion-role" class="active">Rôles & perms</a></li>
+      <li><a href="/consultation-archive">Archives</a></li>
+      <li><a href="/consultation-biblio">Bibliothèque</a></li>
+    </ul>
+    <button class="logout">Déconnexion</button>
+  </aside>
+
+  <main class="main">
+    <h1>Rôles & Permissions</h1>
+    <p class="lead">Cliquez sur “Modifier” pour ajuster les permissions du rôle sélectionné.</p>
+
+    <div class="toolbar">
+      <input type="text" id="search-role" class="search" placeholder="Rechercher un rôle…" />
+      <button id="btn-search-role" class="btn-search">Rechercher</button>
+    </div>
+
+    <table id="roles-table">
+      <thead>
+        <tr><th>ID</th><th>Rôle</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        <tr data-role="Administrateur"><td>1</td><td>Administrateur</td><td><button class="btn-edit">Modifier</button></td></tr>
+        <tr data-role="Agent d’archivage"><td>2</td><td>Agent d’archivage</td><td><button class="btn-edit">Modifier</button></td></tr>
+        <tr data-role="Chef de division"><td>3</td><td>Chef de division</td><td><button class="btn-edit">Modifier</button></td></tr>
+        <tr data-role="Cadre administratif"><td>4</td><td>Cadre administratif</td><td><button class="btn-edit">Modifier</button></td></tr>
+      </tbody>
+    </table>
+  </main>
+
+  <!-- Modal form -->
+  <div class="form-container" id="role-form-container">
+    <div class="form-add">
+      <button class="close" id="close-role-form">&times;</button>
+      <h2 id="role-form-title">Permissions pour Administrateur</h2>
+      <ul class="permissions">
+        <li><input type="checkbox" id="p1" /><div><label for="p1"><strong>Gérer les utilisateurs</strong></label><p class="desc">CRUD sur les comptes utilisateur</p></div></li>
+        <li><input type="checkbox" id="p2" /><div><label for="p2"><strong>Gérer rôles et permissions</strong></label><p class="desc">Définir les droits pour chaque type d’utilisateur</p></div></li>
+        <li><input type="checkbox" id="p3" /><div><label for="p3"><strong>Consulter toutes les archives</strong></label><p class="desc">Accès en lecture à toutes les fiches d’archives</p></div></li>
+        <li><input type="checkbox" id="p4" /><div><label for="p4"><strong>Consulter toutes les fiches bibliothèque</strong></label><p class="desc">Idem pour les documents bibliothèque</p></div></li>
+        <li><input type="checkbox" id="p5" /><div><label for="p5"><strong>Saisir une fiche d’archive</strong></label><p class="desc">Enregistrement d’une nouvelle fiche dans la base</p></div></li>
+        <li><input type="checkbox" id="p6" /><div><label for="p6"><strong>Saisir une fiche bibliothèque</strong></label><p class="desc">Idem pour la bibliothèque</p></div></li>
+        <li><input type="checkbox" id="p7" /><div><label for="p7"><strong>Modifier une fiche</strong></label><p class="desc">Actions sur fiches existantes</p></div></li>
+        <li><input type="checkbox" id="p8" /><div><label for="p8"><strong>Rechercher une fiche</strong></label><p class="desc">Recherche avancée par mot-clé, auteur, client, etc.</p></div></li>
+        <li><input type="checkbox" id="p9" /><div><label for="p9"><strong>Imprimer une fiche</strong></label><p class="desc">Générer PDF selon modèle prédéfini</p></div></li>
+        <li><input type="checkbox" id="p10" /><div><label for="p10"><strong>Recevoir formulaire en ligne</strong></label><p class="desc">Affichage des formulaires envoyés par les cadres</p></div></li>
+        <li><input type="checkbox" id="p11" /><div><label for="p11"><strong>Rechercher une fiche de son pôle</strong></label><p class="desc">Recherche restreinte aux archives de son service</p></div></li>
+        <li><input type="checkbox" id="p12" /><div><label for="p12"><strong>Consulter les fiches de son pôle</strong></label><p class="desc">Consultation uniquement des archives liées à son pôle</p></div></li>
+        <li><input type="checkbox" id="p13" /><div><label for="p13"><strong>Remplir formulaire de projet à archiver</strong></label><p class="desc">Saisie d’un formulaire en ligne lié à un projet à déposer</p></div></li>
+        <li><input type="checkbox" id="p14" /><div><label for="p14"><strong>Envoyer formulaire à agent d’archivage</strong></label><p class="desc">Transmission pour archivage et impression</p></div></li>
+      </ul>
+      <div class="form-actions">
+        <button id="save-permissions" class="btn">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const rolesTable     = document.querySelector('#roles-table tbody');
+    const formContainer  = document.getElementById('role-form-container');
+    const closeForm      = document.getElementById('close-role-form');
+    const formTitle      = document.getElementById('role-form-title');
+    const saveBtn        = document.getElementById('save-permissions');
+    const checkboxes     = document.querySelectorAll('.permissions input');
+
+    const rolesPermissions = {
+      'Administrateur':      ['p1','p2','p3','p4','p5','p6','p7','p8','p9','p10','p11','p12','p13','p14'],
+      'Agent d’archivage':   ['p5','p6','p7','p8','p9','p10'],
+      'Chef de division':    ['p11','p12'],
+      'Cadre administratif': ['p13','p14']
+    };
+
+    // ouvrir modal et charger permissions
+    rolesTable.querySelectorAll('.btn-edit').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const role = btn.closest('tr').dataset.role;
+        formTitle.textContent = `Permissions pour ${role}`;
+        checkboxes.forEach(cb => {
+          cb.checked = rolesPermissions[role].includes(cb.id);
+        });
+        formContainer.style.display = 'flex';
+      });
+    });
+
+    // fermer modal
+    closeForm.addEventListener('click', () => {
+      formContainer.style.display = 'none';
+    });
+
+    // enregistrer et afficher message
+    saveBtn.addEventListener('click', () => {
+      const roleName = formTitle.textContent.replace('Permissions pour ', '');
+      alert(`Les modifications pour « ${roleName} » ont été enregistrées avec succès.`);
+      formContainer.style.display = 'none';
+    });
+
+    // recherche par rôle
+    document.getElementById('btn-search-role').addEventListener('click', () => {
+      const term = document.getElementById('search-role').value.toLowerCase();
+      rolesTable.querySelectorAll('tr').forEach(tr => {
+        tr.style.display = tr.dataset.role.toLowerCase().includes(term) ? '' : 'none';
+      });
+    });
+  </script>
+  <script>
+    document.querySelector('.logout').addEventListener('click', function () {
+      // Si tu utilises localStorage/sessionStorage :
+      // localStorage.clear();
+      // sessionStorage.clear();
+      window.location.href = '/login';
+    });
+  </script>
+</body>
+</html>

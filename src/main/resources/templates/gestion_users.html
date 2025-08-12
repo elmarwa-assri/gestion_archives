@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Gestion des Utilisateurs – CID</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --clr-bg:        #073A87;
+      --clr-dark:      #114168;
+      --clr-light:     #f7f7f7;
+      --clr-alt1:      #F59201;
+      --clr-alt2:      #F8B629;
+      --txt-main:      #333;
+      --shadow-light:  rgba(0,0,0,0.05);
+      --glass-border:  rgba(112,160,200,0.2);
+      --radius:        12px;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Roboto', sans-serif; }
+    body {
+      display:flex; min-height:100vh;
+      background: var(--clr-light); color: var(--txt-main);
+    }
+    /* Sidebar */
+    .sidebar {
+      width:250px;
+      background:#fff;
+      box-shadow:2px 0 5px var(--shadow-light);
+      display:flex; flex-direction:column; align-items:center;
+      padding:30px 0;
+    }
+    .sidebar .logo {
+      width:120px; margin-bottom:40px;
+    }
+    .sidebar .nav-links {
+      list-style:none; width:100%; flex:1;
+    }
+    .sidebar .nav-links li a {
+      display:block;
+      padding:15px 25px;
+      color:#333;
+      text-decoration:none;
+      font-weight:500;
+      font-size:1rem;           /* ← Taille fixe ici */
+      transition:background 0.3s;
+    }
+    .sidebar .nav-links li a.active,
+    .sidebar .nav-links li a:hover {
+      background:#f0f0f0;
+    }
+    .sidebar .logout {
+      margin:20px; padding:10px 20px;
+      background:linear-gradient(135deg,var(--clr-alt1),var(--clr-alt2));
+      color:#fff; border:none; border-radius:5px;
+      font-weight:700; cursor:pointer;
+      transition:background 0.3s;
+    }
+    .sidebar .logout:hover { background:#e67300; }
+
+    /* Main area */
+    .main {
+      flex:1; padding:40px; overflow-y:auto;
+    }
+    .main h1 {
+      font-size:2rem; color:#00539c; margin-bottom:10px;
+    }
+    .main p.lead {
+      font-size:1rem; margin-bottom:25px;
+    }
+
+    /* Toolbar */
+    .toolbar {
+      display:flex; gap:10px; align-items:center; margin-bottom:30px;
+      background:rgba(255,255,255,0.2);
+      backdrop-filter:blur(20px);
+      border:1px solid var(--glass-border);
+      padding:10px; border-radius:var(--radius);
+    }
+    .toolbar .search {
+      flex:1; padding:12px 16px; border:none;
+      border-radius:var(--radius); background:rgba(255,255,255,0.15);
+      color:#333; font-size:1rem;
+    }
+    .toolbar .search::placeholder { color:rgba(0,0,0,0.5); }
+    .toolbar .btn {
+      padding:12px 24px; border:none; border-radius:var(--radius);
+      font-weight:600; cursor:pointer; color:#fff;
+      transition:transform .2s;
+    }
+    .toolbar .btn-search {
+      background:linear-gradient(135deg,var(--clr-dark),var(--clr-bg));
+    }
+    .toolbar .btn-new {
+      background:linear-gradient(135deg,var(--clr-alt1),var(--clr-alt2));
+    }
+    .toolbar .btn:hover { transform:translateY(-2px); }
+
+    /* Table container */
+    .table-container {
+      background:rgba(255,255,255,0.2);
+      backdrop-filter:blur(20px);
+      border:1px solid var(--glass-border);
+      border-radius:var(--radius);
+      padding:20px; box-shadow:0 8px 20px var(--shadow-light);
+      overflow-x:auto;
+    }
+    table {
+      width:100%; border-collapse:collapse;
+      background:#fff; border-radius:var(--radius);
+      min-width:600px;
+    }
+    th, td {
+      padding:14px 18px; text-align:left;
+    }
+    th {
+      background:var(--clr-bg); color:#fff; font-weight:500;
+    }
+    tbody tr {
+      border-bottom:1px solid #eee;
+      transition:background .2s;
+    }
+    tbody tr:hover {
+      background:#f7f7f7;
+    }
+    .btn-edit, .btn-delete {
+      padding:6px 12px; border:none; border-radius:6px;
+      font-size:0.9rem; cursor:pointer; transition:transform .2s;
+      color:#fff;
+    }
+    .btn-edit {
+      background:linear-gradient(135deg,var(--clr-dark),var(--clr-bg));
+      margin-right:6px;
+    }
+    .btn-delete {
+      background:linear-gradient(135deg,#e74c3c,#c0392b);
+    }
+    .btn-edit:hover, .btn-delete:hover {
+      transform:translateY(-2px);
+    }
+
+    /* Modal form overlay */
+    .form-container {
+      display:none; position:fixed; inset:0;
+      background:rgba(0,0,0,0.6);
+      align-items:center; justify-content:center;
+      z-index:1000;
+    }
+    .form-container.open { display:flex; }
+    .form-add {
+      background:#fff; padding:30px; border-radius:var(--radius);
+      box-shadow:0 8px 30px var(--shadow-light);
+      width:90%; max-width:500px; position:relative;
+    }
+    .form-add h2 {
+      margin-bottom:20px; color:var(--clr-bg);
+    }
+    .form-add .close {
+      position:absolute; top:18px; right:18px;
+      background:transparent; border:none;
+      font-size:1.2rem; cursor:pointer; color:#333;
+    }
+    .form-group { margin-bottom:20px; }
+    .form-group label {
+      display:block; margin-bottom:8px;
+      color:var(--clr-dark); font-weight:600;
+    }
+    .form-group input,
+    .form-group select {
+      width:100%; padding:12px 16px;
+      border:1px solid #ccc; border-radius:var(--radius);
+      font-size:1rem; transition:border-color .3s;
+    }
+    .form-group input:focus,
+    .form-group select:focus {
+      outline:none; border-color:var(--clr-bg);
+    }
+    .form-actions {
+      display:flex; gap:12px; margin-top:10px;
+    }
+    .form-actions .btn-submit {
+      flex:1; padding:12px; border:none; border-radius:var(--radius);
+      background:linear-gradient(135deg,var(--clr-alt1),var(--clr-alt2));
+      color:#fff; font-weight:600; cursor:pointer;
+      transition:transform .2s;
+    }
+    .form-actions .btn-cancel {
+      flex:1; padding:12px; border:none; border-radius:var(--radius);
+      background:#ccc; color:var(--txt-main); cursor:pointer;
+      transition:transform .2s;
+    }
+    .form-actions button:hover {
+      transform:translateY(-1px);
+    }
+  </style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <img src="./logo.png" alt="Logo CID" class="logo"/>
+    <ul class="nav-links">
+      <li><a href="/admin-dashboard">Tableau de bord</a></li>
+      <li><a href="/gestion-users" class="active">Utilisateurs</a></li>
+      <li><a href="/gestion-role">Rôles & perms</a></li>
+      <li><a href="/consultation-archive">Archives</a></li>
+      <li><a href="/consultation-biblio">Bibliothèque</a></li>
+    </ul>
+    <button class="logout">Déconnexion</button>
+  </aside>
+
+  <main class="main">
+    <h1>Gérer les utilisateurs</h1>
+    <p class="lead">Créez, modifiez ou supprimez des comptes utilisateur.</p>
+
+    <div class="toolbar">
+      <input type="text" id="search" class="search" placeholder="Rechercher un utilisateur…" />
+      <button id="btn-search" class="btn btn-search">Rechercher</button>
+      <button id="btn-new"    class="btn btn-new">+ Nouvel utilisateur</button>
+    </div>
+
+    <div class="table-container">
+      <table id="users-table">
+        <thead>
+          <tr>
+            <th>ID</th><th>Nom</th><th>E-mail</th><th>Rôle</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr data-id="1">
+            <td>1</td>
+            <td>Hamza Talidi</td>
+            <td>hamza@example.com</td>
+            <td>Administrateur</td>
+            <td>
+              <button class="btn-edit">Modifier</button>
+              <button class="btn-delete">Supprimer</button>
+            </td>
+          </tr>
+          <tr data-id="2">
+            <td>2</td>
+            <td>Salma Ben</td>
+            <td>salma@example.com</td>
+            <td>Agent d’archivage</td>
+            <td>
+              <button class="btn-edit">Modifier</button>
+              <button class="btn-delete">Supprimer</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <!-- Modal form -->
+  <div class="form-container" id="form-container">
+    <div class="form-add">
+      <button class="close" id="close-form">&times;</button>
+      <h2 id="form-title">Ajouter un utilisateur</h2>
+      <form id="user-form">
+        <input type="hidden" id="user-id"/>
+
+        <div class="form-group">
+          <label for="name">Nom complet</label>
+          <input type="text" id="name" required/>
+        </div>
+        <div class="form-group">
+          <label for="email">Adresse e-mail</label>
+          <input type="email" id="email" required/>
+        </div>
+        <div class="form-group">
+          <label for="role">Rôle</label>
+          <select id="role" required>
+            <option value="">Sélectionner un rôle</option>
+            <option>Administrateur</option>
+            <option>Agent d’archivage</option>
+            <option>Chef de division</option>
+            <option>Cadre administratif</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="password">Mot de passe</label>
+          <input type="password" id="password" required/>
+        </div>
+        <div class="form-group">
+          <label for="confirm-password">Confirmer mot de passe</label>
+          <input type="password" id="confirm-password" required/>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-submit">Enregistrer</button>
+          <button type="button" class="btn-cancel" id="cancel-form">Annuler</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // ... le même script de gestion des utilisateurs ...
+  </script>
+  <script>
+    document.querySelector('.logout').addEventListener('click', function () {
+      // Si tu utilises localStorage/sessionStorage :
+      // localStorage.clear();
+      // sessionStorage.clear();
+      window.location.href = '/login';
+    });
+  </script>
+</body>
+</html>
