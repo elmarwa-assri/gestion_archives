@@ -8,8 +8,8 @@ import java.time.LocalDate;
 @Data
 public class ArchiveRequest {
     private String titre;
-    private String codeAffaire;
-    private LocalDate dateEdition;
+    private String code;
+    private LocalDate date;
     private String departement;
     private String nature;
     private String stade;

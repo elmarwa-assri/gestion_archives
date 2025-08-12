@@ -15,7 +15,7 @@ public class Archive {
     private Long id;
 
     private String titre;           // Ajouté
-    private String codeAffaire;     // Ajouté
+    private String code;     // Ajouté
 
     @Enumerated(EnumType.STRING)
     private Departement departement;
@@ -33,7 +33,7 @@ public class Archive {
     private LocalDate dateElimination;
 
     @Column(name = "date_edition")
-    private LocalDate dateEdition;
+    private LocalDate date;
 
     private String nomFichier;
 

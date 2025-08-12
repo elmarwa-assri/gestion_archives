@@ -68,6 +68,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/dashbord_cadre",
                                 "/formulaire-cadre",
+                                "/api/v1/archives/**",
                                 "/consulter-cadre"
                         ).hasAuthority("CADRE")
 

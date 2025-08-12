@@ -11,11 +11,6 @@ public class CadreController {
         return "dashbord_cadre";
     }
 
-    @GetMapping("/formulaire-cadre")
-    public String formulaire() {
-        return "Formulaire_cadre";
-    }
-
     @GetMapping("/consulter-cadre")
     public String consulter() {
         return "consulter_cadre";

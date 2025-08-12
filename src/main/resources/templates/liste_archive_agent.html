@@ -66,13 +66,13 @@
     <tr th:each="archive : ${archives}">
       <td th:text="${archive.id}">1</td>
       <td th:text="${archive.titre}">Titre</td>
-      <td th:text="${archive.codeAffaire}">AFF-001</td>
+      <td th:text="${archive.code}">AFF-001</td>
       <td th:text="${archive.departement}">DEP</td>
       <td th:text="${archive.nature}">NATURE</td>
       <td th:text="${archive.stadeEtude}">STADE</td>
       <td th:text="${archive.client}">CLIENT</td>
       <td th:text="${archive.resume}">Résumé</td>
-      <td th:text="${archive.dateEdition}">2025-01-01</td>
+      <td th:text="${archive.date}">2025-01-01</td>
     </tr>
     </tbody>
   </table>

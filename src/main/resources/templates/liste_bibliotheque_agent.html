@@ -70,12 +70,12 @@
         <td th:text="${#temporals.format(biblio.dateCreation, 'dd/MM/yyyy')}">01/01/2025</td>
         <td th:text="${biblio.category}">Catégorie</td>
         <td>
-          <a th:if="${biblio.filePath}" th:href="${biblio.filePath}" target="_blank">Voir</a>
-          <span th:if="${biblio.filePath == null}">—</span>
+          <a th:if="${biblio.fileName}" th:href="${biblio.fileName}" target="_blank">Voir</a>
+          <span th:if="${biblio.fileName == null}">—</span>
         </td>
         <td>
           <button class="action-btn" type="button">Voir</button>
-          <a class="action-btn" th:if="${biblio.filePath}" th:href="${biblio.filePath}" download>Télécharger</a>
+          <a class="action-btn" th:if="${biblio.fileName}" th:href="@{/bibliotheques/download/{name}(name=${biblio.fileName})}" download>Télécharger</a>
         </td>
       </tr>
       </tbody>

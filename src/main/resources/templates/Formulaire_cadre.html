@@ -1,13 +1,10 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Formulaire de projet à archiver – CID</title>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
-    rel="stylesheet"
-  />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
   <style>
     * { margin:0; padding:0; box-sizing:border-box }
     body {
@@ -70,12 +67,6 @@
       text-align:center;
       font-size:1.5rem; color:#00539c; margin-bottom:20px;
     }
-    .section {
-      margin-bottom:30px;
-    }
-    .section h3 {
-      font-size:1.2rem; color:#00539c; margin-bottom:15px;
-    }
     .grid-2 {
       display:grid; grid-template-columns:1fr 1fr; gap:20px;
     }
@@ -113,89 +104,82 @@
 </head>
 <body>
 
-  <aside class="sidebar">
-    <img src="./logo.png" alt="Logo CID" class="logo" />
-    <ul class="nav-links">
-      <li><a href="/dashbord_cadre">Tableau de bord</a></li>
-      <li><a href="/formulaire-cadre" class="active">Formulaire de projet à archiver</a></li>
-      <li><a href="/consulter-cadre">Consulter fiches de son pôle</a></li>
-    </ul>
-    <button class="logout">Déconnexion</button>
-  </aside>
+<!-- Sidebar -->
+<aside class="sidebar">
+  <img src="./logo.png" alt="Logo CID" class="logo" />
+  <ul class="nav-links">
+    <li><a href="/dashbord_cadre">Tableau de bord</a></li>
+    <li><a href="/formulaire-cadre" class="active">Formulaire de projet à archiver</a></li>
+    <li><a href="/consulter-cadre">Consulter fiches de son pôle</a></li>
+  </ul>
+  <button class="logout">Déconnexion</button>
+</aside>
 
-  <main class="main">
-    <h1>Formulaire de projet à archiver</h1>
-    <p class="lead">
-      Saisissez tous les détails de votre projet, puis envoyez le formulaire à l’agent d’archivage.
-    </p>
+<!-- Main content -->
+<main class="main">
+  <h1>Formulaire de projet à archiver</h1>
+  <p class="lead">
+    Saisissez tous les détails de votre projet, puis envoyez le formulaire à l’agent d’archivage.
+  </p>
 
-    <div class="form-add">
-      <h2>Informations générales</h2>
-      <form id="projet-form">
-        <div class="form-group">
-          <label for="titre">Titre du projet</label>
-          <input type="text" id="titre" name="titre" placeholder="Ex : Nouveau pont A1" required />
-        </div>
-        <div class="grid-2">
-          <div class="form-group">
-            <label for="code">Code projet</label>
-            <input type="text" id="code" name="code" placeholder="Ex : PRJ-2025-001" />
-          </div>
-          <div class="form-group">
-            <label for="date">Date</label>
-            <input type="date" id="date" name="date" />
-          </div>
-        </div>
-        <div class="grid-2">
-          <div class="form-group">
-            <label for="departement">Département</label>
-            <select id="departement" name="departement">
-              <option>EEP</option>
-              <option>IT</option>
-              <option>RH</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="nature">Nature</label>
-            <select id="nature" name="nature">
-              <option>RAPPORT(s) & PLAN</option>
-              <option>GUIDE</option>
-              <option>MANUEL</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-group">
-          <label for="client">Client</label>
-          <select id="client" name="client">
-            <option>DPDPM</option>
-            <option>Autre</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="resume">Résumé</label>
-          <textarea id="resume" name="resume" rows="4" placeholder="Résumé détaillé du projet…"></textarea>
-        </div>
-        <div class="form-actions">
-          <button type="submit" class="btn">Envoyer à l’agent d’archivage</button>
-        </div>
-      </form>
-    </div>
-  </main>
+  <div class="form-add">
+    <h2>Informations générales</h2>
+    <form th:action="@{/archives/envoiFormulaire}" method="post" th:object="${archive}">
+      <div class="form-group">
+        <label for="titre">Titre</label>
+        <input type="text" id="titre" th:field="*{titre}" required />
+      </div>
 
-  <script>
-    document.getElementById('projet-form').addEventListener('submit', e => {
-      e.preventDefault();
-      alert('Le formulaire a été envoyé à l’agent d’archivage.');
-      // Ici : envoi AJAX ou redirection
-    });
-  </script>
-  <script>
-    document.querySelector('.logout').addEventListener('click', function () {
-      // Si tu utilises localStorage/sessionStorage :
-      // localStorage.clear();
-      // sessionStorage.clear();
-      window.location.href = '/login';
-    });
-  </script>
+      <div class="form-group">
+        <label for="code">Code</label>
+        <input type="text" id="code" th:field="*{code}" />
+      </div>
+
+      <div class="form-group">
+        <label for="date">Date</label>
+        <input type="date" id="date" th:field="*{date}" />
+      </div>
+
+      <div class="form-group">
+        <label for="departement">Département</label>
+        <select id="departement" th:field="*{departement}">
+          <option th:each="d : ${T(com.CID.ArchiveAPP.gestiondesFiches.data.enums.Departement).values()}"
+                  th:value="${d}" th:text="${d}"></option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="nature">Nature</label>
+        <select id="nature" th:field="*{nature}">
+          <option th:each="n : ${T(com.CID.ArchiveAPP.gestiondesFiches.data.enums.Nature).values()}"
+                  th:value="${n}" th:text="${n}"></option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="client">Client</label>
+        <select id="client" th:field="*{client}">
+          <option th:each="c : ${T(com.CID.ArchiveAPP.gestiondesFiches.data.enums.Client).values()}"
+                  th:value="${c}" th:text="${c}"></option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="resume">Résumé</label>
+        <textarea id="resume" th:field="*{resume}"></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn">Envoyer à l’agent d’archivage</button>
+      </div>
+    </form>
+  </div>
+</main>
+
+<script>
+  document.querySelector('.logout').addEventListener('click', function () {
+    window.location.href = '/login';
+  });
+</script>
 </body>
 </html>

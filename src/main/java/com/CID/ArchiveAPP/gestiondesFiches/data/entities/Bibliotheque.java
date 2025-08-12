@@ -18,7 +18,7 @@ public class Bibliotheque {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = true)
     private String biblioId; // Ex: BIB-2025-001
 
     @Column(nullable = false)
@@ -33,7 +33,7 @@ public class Bibliotheque {
     private String category; // Manuel, Guide, Référence, Rapport
     private String summary;
 
-    private String filePath; // Chemin vers le fichier uploadé
+    private String fileName; // Chemin vers le fichier uploadé
 
     @CreationTimestamp
     private LocalDateTime createdAt;
