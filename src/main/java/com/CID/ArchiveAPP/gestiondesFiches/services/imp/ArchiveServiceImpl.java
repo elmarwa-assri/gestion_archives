@@ -9,6 +9,8 @@ import com.CID.ArchiveAPP.gestiondesFiches.data.enums.Etat;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import static com.CID.ArchiveAPP.gestiondesFiches.data.enums.Etat.AG;
+
 @Service
 @RequiredArgsConstructor
 public class ArchiveServiceImpl implements ArchiveService {
@@ -32,6 +34,12 @@ public class ArchiveServiceImpl implements ArchiveService {
         archive.setClient(dto.getClient());
         archive.setResume(dto.getResume());
         archive.setEtat(Etat.CA);
+        archiveRepository.save(archive);
+    }
+
+    @Override
+    public void updateArchive(Archive archive) {
+        archive.setEtat(AG);
         archiveRepository.save(archive);
     }
 }

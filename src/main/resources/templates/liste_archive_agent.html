@@ -96,7 +96,8 @@
       <td th:text="${archive.resume}">Résumé</td>
       <td th:text="${archive.date}">2025-01-01</td>
       <td>
-        <a th:href="@{'/archives/modifier/' + ${archive.id}}">
+
+        <a th:href="@{/archives/saisir/{id}(id=${archive.id})}">
           <button type="button" class="btn-action btn-edit">✏ Modifier</button>
         </a>
       </td>

@@ -110,6 +110,25 @@
     .action-btn:hover {
       background: #e67300;
     }
+
+    /* Correction de l’alignement des boutons */
+    .table-container th:last-child {
+      width: 320px; /* largeur fixe pour la colonne Actions */
+    }
+    .table-container td:last-child {
+      white-space: nowrap; /* empêche le retour à la ligne */
+    }
+    .table-container td:last-child .action-btn {
+      margin: 0 8px 0 0;
+    }
+    .table-container td:last-child .action-btn:last-of-type {
+      margin-right: 0;
+    }
+    @media (max-width: 900px) {
+      .table-container td:last-child {
+        white-space: normal; /* sur mobile, autorise retour à la ligne */
+      }
+    }
   </style>
 </head>
 <body>
@@ -158,12 +177,22 @@
         <td>
           <a class="action-btn"
              th:if="${biblio.fileName}"
-             th:href="@{'/uploads/' + ${biblio.fileName}}"
-             target="_blank">Voir</a>
+             th:href="@{/bibliotheques/modifier/{id}(id=${biblio.id})}">
+            Modifier
+          </a>
           <a class="action-btn"
              th:if="${biblio.fileName}"
              th:href="@{/bibliotheques/download/{name}(name=${biblio.fileName})}"
-             download>Télécharger</a>
+             download>
+            Télécharger
+          </a>
+          <a class="action-btn"
+             th:if="${biblio.fileName}"
+             th:href="@{'/uploads/' + ${biblio.fileName}}"
+             target="_blank"
+             onclick="setTimeout(function(){window.print();}, 500); return false;">
+            Imprimer
+          </a>
           <span th:if="${biblio.fileName == null}">—</span>
         </td>
       </tr>

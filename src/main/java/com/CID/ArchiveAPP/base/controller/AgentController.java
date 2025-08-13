@@ -18,10 +18,6 @@ public class AgentController {
         return "saisie_biblio";
     }
 
-    @GetMapping("/recevoir-formulaire")
-    public String recevoirFormulaire() {
-        return "recevoir_formulaire";
-    }
 
     @GetMapping("/gestion-heatmap")
     public String gestionSalle() {

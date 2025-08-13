@@ -29,6 +29,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+import static com.CID.ArchiveAPP.gestiondesFiches.data.enums.Etat.AG;
+
 @Controller
 @RequiredArgsConstructor
 @RequestMapping
@@ -95,9 +97,36 @@ public class AgentFichesController {
 
     @GetMapping("/archives/agent")
     public String listeArchivesAgent(Model model) {
-        List<Archive> archives = archiveRepository.findAll();
+        List<Archive> archives = archiveRepository.findAllByEtat(AG);
         model.addAttribute("archives", archives);
         return "liste_archive_agent";
+    }
+
+    @GetMapping("/recevoir-formulaire")
+    public String recevoirFormulaires(Model model) {
+        model.addAttribute("archives", archiveRepository.findAllByEtat(Etat.CA));
+        return "recevoir_formulaire";
+    }
+
+    // Formulaire "Saisir" pré-rempli
+    @GetMapping("/archives/saisir/{id}")
+    public String saisirArchive(@PathVariable Long id, Model model) {
+        Archive archive = archiveRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Archive introuvable avec id: " + id));
+
+        model.addAttribute("archive", archive);
+        model.addAttribute("departements", Departement.values());
+        model.addAttribute("natures", Nature.values());
+        model.addAttribute("clients", Client.values());
+
+        return "saisir_archive"; // Template formulaire
+    }
+
+    @PostMapping("/archives/enregistrer-updated")
+    public String updateArchive(@ModelAttribute Archive archive, RedirectAttributes ra) {
+        archiveService.updateArchive(archive);
+        ra.addFlashAttribute("successMessage", "Fiche archive enregistrée avec succès.");
+        return "redirect:/recevoir_formulaire";
     }
 
     // ============== BIBLIOTHEQUES ==============

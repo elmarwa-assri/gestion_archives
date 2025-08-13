@@ -37,6 +37,7 @@ public class Archive {
 
 
     private String nomFichier;
+    private String cote;
 
     @Enumerated(EnumType.STRING)
     private Client client;
