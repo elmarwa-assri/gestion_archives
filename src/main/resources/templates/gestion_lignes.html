@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Gestion des Lignes – Agent d’archivage</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Roboto',sans-serif; display:flex; flex-direction:column; min-height:100vh; background:#f0f2f5; color:#333; }
+        .sidebar { width:250px; background:#fff; box-shadow:2px 0 5px rgba(0,0,0,0.1); display:flex; flex-direction:column; align-items:center; padding:30px 0; position:fixed; top:0; bottom:0; }
+        .sidebar .logo { width:120px; margin-bottom:40px; }
+        .sidebar .nav-links { list-style:none; width:100%; flex:1; }
+        .sidebar .nav-links li a { display:block; padding:15px 25px; color:#333; text-decoration:none; font-weight:500; transition:background .3s; }
+        .sidebar .nav-links li a.active, .sidebar .nav-links li a:hover { background:#f0f0f0; }
+        .sidebar .logout { margin:20px; padding:10px 20px; background:#f28c1c; color:#fff; border:none; border-radius:5px; font-weight:700; cursor:pointer; transition:background .3s; }
+        .sidebar .logout:hover { background:#e67300; }
+        .main { margin-left:250px; padding:40px; flex:1; overflow-y:auto; }
+        .main h1 { font-size:2rem; color:#00539c; margin-bottom:10px; }
+        .lead { font-size:1rem; margin-bottom:25px; }
+        .card { background:#fff; border-radius:10px; box-shadow:0 4px 10px rgba(0,0,0,0.05); padding:20px; margin-bottom:20px; }
+        .form-row { display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+        input[type="text"], input[type="search"] { padding:10px 12px; border:1px solid #ddd; border-radius:6px; background:#fff; min-width:220px; outline:none; }
+        input:focus { border-color:#47a5dc; box-shadow:0 0 0 3px rgba(71,165,220,0.15); }
+        .btn { display:inline-block; padding:10px 16px; border:none; border-radius:6px; cursor:pointer; font-weight:700; text-decoration:none; }
+        .btn-primary { background:#47a5dc; color:#fff; }
+        .btn-primary:hover { background:#268bbd; }
+        .btn-danger { background:#dc3545; color:#fff; }
+        .btn-danger:hover { background:#c02a39; }
+        .btn-light { background:#f0f0f0; color:#333; }
+        .table-wrap { overflow:auto; }
+        table { width:100%; border-collapse:collapse; background:#fff; }
+        th, td { padding:12px; border-bottom:1px solid #eee; }
+        thead th { background:#00539c; color:#fff; text-align:left; }
+        tbody tr:hover { background:#fafafa; }
+        .header-actions { display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between; margin-bottom:20px; }
+    </style>
+</head>
+<body>
+
+<aside class="sidebar">
+    <img th:src="@{/logo.png}" alt="Logo CID" class="logo"/>
+    <ul class="nav-links">
+        <li><a href="/dashbord_agent_archivage">Tableau de bord</a></li>
+        <li><a href="/archives/agent">Liste des archives</a></li>
+        <li><a href="/archives/ajouter">Saisir fiche archive</a></li>
+        <li><a href="/gestion-ligne" class="active">Gestion des Lignes</a></li>
+        <li><a href="/gestion-armoire">Gestion des Armoires</a></li>
+        <li><a href="/gestion-boite">Gestion des Boîtes</a></li>
+    </ul>
+    <button class="logout" onclick="window.location.href='/login'">Déconnexion</button>
+</aside>
+
+<main class="main">
+    <h1>Gestion des Lignes</h1>
+    <p class="lead">Ajoutez, recherchez et supprimez des lignes d’archivage.</p>
+
+    <!-- Recherche -->
+    <div class="card header-actions">
+        <form th:action="@{/gestion-ligne}" method="get" class="form-row">
+            <input type="search" name="keyword" placeholder="Rechercher une ligne…" th:value="${keyword}">
+            <button type="submit" class="btn btn-light">Rechercher</button>
+        </form>
+    </div>
+
+    <!-- Formulaire -->
+    <section class="card">
+        <h2 style="color:#00539c;">Ajouter une ligne</h2>
+        <form th:action="@{/gestion-ligne/ajouter}" th:object="${newLigne}" method="post" class="form-row">
+            <input type="text" th:field="*{nom}" placeholder="Nom de la ligne" required/>
+            <button type="submit" class="btn btn-primary">Ajouter</button>
+        </form>
+    </section>
+
+    <!-- Tableau -->
+    <section class="card">
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>ID</th><th>Nom</th><th>Actions</th></tr></thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(lignes)}">
+                    <td colspan="3" style="text-align:center; color:#777;">Aucune ligne trouvée</td>
+                </tr>
+                <tr th:each="ligne : ${lignes}">
+                    <td th:text="${ligne.id}"></td>
+                    <td th:text="${ligne.nom}"></td>
+                    <td>
+                        <a th:href="@{'/gestion-ligne/supprimer/' + ${ligne.id}}" class="btn btn-danger" onclick="return confirm('Supprimer cette ligne ?');">Supprimer</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+</body>
+</html>

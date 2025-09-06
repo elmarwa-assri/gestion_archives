@@ -34,13 +34,15 @@
 <body>
 
 <aside class="sidebar">
-  <img th:src="@{/images/logo.png}" alt="Logo CID" class="logo" />
+  <img src="./logo.png" alt="Logo CID" class="logo"/>
   <ul class="nav-links">
     <li><a href="/dashbord_cadre">Tableau de bord</a></li>
-    <li><a href="/formulaire-cadre">Formulaire de projet à archiver</a></li>
-    <li><a href="/consulter-cadre" class="active">Consulter fiches de son pôle</a></li>
+    <li><a href="/cadre/formulaire">Formulaire de projet à archiver</a></li>
+    <li><a href="/cadre/consulter" class="active">Consulter fiches de son pôle</a></li>
   </ul>
-  <form th:action="@{/logout}" method="post"><button class="logout">Déconnexion</button></form>
+  <form th:action="@{/logout}" method="post">
+    <button type="submit" class="logout">Déconnexion</button>
+  </form>
 </aside>
 
 <main class="main">
@@ -73,7 +75,7 @@
         <td th:text="${a.client}">DPDPM</td>
         <td class="truncate" th:title="${a.resume}" th:text="${a.resume}">Résumé…</td>
         <td>
-          <a th:href="@{/archives/{id}(id=${a.id})}" class="btn btn-view">Consulter</a>
+          <a th:href="@{/cadre/archives/{id}(id=${a.id})}" class="btn btn-view">Consulter</a>
         </td>
       </tr>
       </tbody>
@@ -81,8 +83,6 @@
   </div>
 </main>
 
-<script>
-  document.querySelector('.logout').addEventListener('click', () => { window.location.href = '/login'; });
-</script>
+<!-- Si tu utilises Spring Security, laisse le POST /logout; pas besoin de JS -->
 </body>
 </html>

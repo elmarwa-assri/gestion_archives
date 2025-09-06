@@ -32,6 +32,7 @@ public class SecurityConfig {
                                 "/login",
                                 "/api/v1/auth/**",
                                 "/css/**",
+                                "/logo.png",
                                 "/js/**",
                                 "/images/**",
                                 "/favicon.ico",

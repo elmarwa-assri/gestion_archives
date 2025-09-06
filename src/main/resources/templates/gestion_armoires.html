@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Gestion des Armoires – Agent d’archivage</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family:'Roboto',sans-serif;
+            display:flex; flex-direction:column; min-height:100vh;
+            background:#f0f2f5; color:#333;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width:250px; background:#fff;
+            box-shadow:2px 0 5px rgba(0,0,0,0.1);
+            display:flex; flex-direction:column; align-items:center;
+            padding:30px 0; position:fixed; top:0; bottom:0;
+        }
+        .sidebar .logo { width:120px; margin-bottom:40px; }
+        .sidebar .nav-links { list-style:none; width:100%; flex:1; }
+        .sidebar .nav-links li a {
+            display:block; padding:15px 25px;
+            color:#333; text-decoration:none; font-weight:500;
+            transition:background .3s;
+        }
+        .sidebar .nav-links li a.active,
+        .sidebar .nav-links li a:hover { background:#f0f0f0; }
+        .sidebar .logout {
+            margin:20px; padding:10px 20px;
+            background:#f28c1c; color:#fff;
+            border:none; border-radius:5px;
+            font-weight:700; cursor:pointer;
+            transition:background .3s;
+        }
+        .sidebar .logout:hover { background:#e67300; }
+
+        /* Main */
+        .main {
+            margin-left:250px; padding:40px; flex:1; overflow-y:auto;
+        }
+        .main h1 { font-size:2rem; color:#00539c; margin-bottom:10px; }
+        .lead { font-size:1rem; margin-bottom:25px; }
+
+        /* Cards */
+        .card {
+            background:#fff; border-radius:10px;
+            box-shadow:0 4px 10px rgba(0,0,0,0.05);
+            padding:20px; margin-bottom:20px;
+        }
+
+        /* Formulaire */
+        .form-row { display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+        input[type="text"], input[type="search"], select {
+            padding:10px 12px; border:1px solid #ddd; border-radius:6px; background:#fff;
+            min-width:220px; outline:none;
+        }
+        input[type="text"]:focus, input[type="search"]:focus { border-color:#47a5dc; box-shadow:0 0 0 3px rgba(71,165,220,0.15); }
+
+        .btn { display:inline-block; padding:10px 16px; border:none; border-radius:6px; cursor:pointer; font-weight:700; text-decoration:none; }
+        .btn-primary { background:#47a5dc; color:#fff; }
+        .btn-primary:hover { background:#268bbd; }
+        .btn-danger { background:#dc3545; color:#fff; }
+        .btn-danger:hover { background:#c02a39; }
+        .btn-light { background:#f0f0f0; color:#333; }
+
+        /* Table */
+        .table-wrap { overflow:auto; }
+        table { width:100%; border-collapse:collapse; background:#fff; }
+        th, td { padding:12px; border-bottom:1px solid #eee; }
+        thead th { background:#00539c; color:#fff; text-align:left; }
+        tbody tr:hover { background:#fafafa; }
+
+        /* Header actions */
+        .header-actions { display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between; margin-bottom:20px; }
+        .left-actions { display:flex; gap:12px; align-items:center; }
+
+        @media (max-width: 700px){
+            .main{ padding:20px; }
+            .sidebar{ position:static; width:100%; height:auto; }
+            .main{ margin-left:0; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+    <img th:src="@{/logo.png}" src="./logo.png" alt="Logo CID" class="logo" />
+    <ul class="nav-links">
+        <li><a href="/dashbord_agent_archivage">Tableau de bord</a></li>
+        <li><a href="/archives/agent">Liste des archives</a></li>
+        <li><a href="/archives/ajouter">Saisir fiche archive</a></li>
+        <li><a href="/bibliotheques/ajouter">Saisir fiche bibliothèque</a></li>
+        <li><a href="/bibliotheques/agent">Liste bibliothèque</a></li>
+        <li><a href="/recevoir-formulaire">Recevoir formulaire</a></li>
+        <li><a href="/gestion-heatmap">Gestion de salle d’archive</a></li>
+        <li><a href="/gestion-ligne">Gestion des Lignes</a></li>
+        <li><a href="/gestion-armoire" class="active">Gestion des Armoires</a></li>
+        <li><a href="/gestion-boite">Gestion des Boîtes</a></li>
+    </ul>
+    <button class="logout" onclick="window.location.href='/login'">Déconnexion</button>
+</aside>
+
+<main class="main">
+    <h1>Gestion des Armoires</h1>
+    <p class="lead">Ajoutez, recherchez et supprimez des armoires dans la salle d’archive.</p>
+
+    <!-- Recherche -->
+    <div class="card header-actions">
+        <div class="left-actions">
+            <form th:action="@{/gestion-armoire}" method="get" class="form-row">
+                <input type="search" name="keyword" placeholder="Rechercher une armoire…" th:value="${keyword}">
+                <button type="submit" class="btn btn-light">Rechercher</button>
+            </form>
+        </div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <a class="btn btn-primary" th:href="@{/gestion-boite}">Aller aux Boîtes →</a>
+            <a class="btn btn-light" th:href="@{/gestion-ligne}">Voir les Lignes</a>
+        </div>
+    </div>
+
+    <!-- Formulaire d'ajout -->
+    <section class="card">
+        <h2 style="color:#00539c; margin-bottom:10px; font-size:1.2rem;">Ajouter une armoire</h2>
+        <form th:action="@{/gestion-armoire/ajouter}" th:object="${newArmoire}" method="post" class="form-row">
+            <input type="text" th:field="*{nom}" placeholder="Nom de l'armoire" required/>
+            <button type="submit" class="btn btn-primary">Ajouter</button>
+        </form>
+    </section>
+
+    <!-- Tableau -->
+    <section class="card">
+        <div class="table-wrap">
+            <table>
+                <thead>
+                <tr>
+                    <th style="width:120px;">ID</th>
+                    <th>Nom</th>
+                    <th style="width:180px;">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(armoires)}">
+                    <td colspan="3" style="text-align:center; color:#777;">Aucune armoire trouvée</td>
+                </tr>
+                <tr th:each="armoire : ${armoires}">
+                    <td th:text="${armoire.id}">1</td>
+                    <td th:text="${armoire.nom}">Armoire A</td>
+                    <td>
+                        <a th:href="@{'/gestion-armoire/supprimer/' + ${armoire.id}}" class="btn btn-danger" onclick="return confirmDelete(this);">Supprimer</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+
+<script>
+    function confirmDelete(el){
+        const row = el.closest('tr');
+        const name = row ? row.querySelector('td:nth-child(2)')?.textContent?.trim() : '';
+        return confirm(`Supprimer définitivement ${name || 'cette armoire'} ?`);
+    }
+</script>
+</body>
+</html>

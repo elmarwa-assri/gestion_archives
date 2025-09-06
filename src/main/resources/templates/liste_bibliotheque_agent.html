@@ -24,15 +24,8 @@
       top: 0;
       bottom: 0;
     }
-    .sidebar .logo {
-      width: 120px;
-      margin-bottom: 40px;
-    }
-    .sidebar .nav-links {
-      list-style: none;
-      width: 100%;
-      flex: 1;
-    }
+    .sidebar .logo { width: 120px; margin-bottom: 40px; }
+    .sidebar .nav-links { list-style: none; width: 100%; flex: 1; }
     .sidebar .nav-links li a {
       display: block;
       padding: 15px 25px;
@@ -42,9 +35,7 @@
       transition: background .3s;
     }
     .sidebar .nav-links li a.active,
-    .sidebar .nav-links li a:hover {
-      background: #f0f0f0;
-    }
+    .sidebar .nav-links li a:hover { background: #f0f0f0; }
     .sidebar .logout {
       margin: 20px;
       padding: 10px 20px;
@@ -56,23 +47,10 @@
       cursor: pointer;
       transition: background .3s;
     }
-    .sidebar .logout:hover {
-      background: #e67300;
-    }
-    .main {
-      margin-left: 250px;
-      padding: 40px;
-      width: 100%;
-    }
-    h1 {
-      font-size: 2rem;
-      color: #00539c;
-      margin-bottom: 10px;
-    }
-    .lead {
-      font-size: 1rem;
-      margin-bottom: 25px;
-    }
+    .sidebar .logout:hover { background: #e67300; }
+    .main { margin-left: 250px; padding: 40px; width: 100%; }
+    h1 { font-size: 2rem; color: #00539c; margin-bottom: 10px; }
+    .lead { font-size: 1rem; margin-bottom: 25px; }
     .table-container {
       background: #fff;
       border-radius: 8px;
@@ -80,22 +58,14 @@
       padding: 20px;
       margin-top: 20px;
     }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
+    table { width: 100%; border-collapse: collapse; }
     th, td {
       padding: 12px 15px;
       text-align: left;
       border-bottom: 1px solid #ddd;
     }
-    th {
-      background-color: #f8f9fa;
-      font-weight: 700;
-    }
-    tr:hover {
-      background-color: #f5f5f5;
-    }
+    th { background-color: #f8f9fa; font-weight: 700; }
+    tr:hover { background-color: #f5f5f5; }
     .action-btn {
       padding: 5px 10px;
       background: #f28c1c;
@@ -107,40 +77,28 @@
       text-decoration: none;
       display: inline-block;
     }
-    .action-btn:hover {
-      background: #e67300;
-    }
+    .action-btn:hover { background: #e67300; }
 
-    /* Correction de l’alignement des boutons */
-    .table-container th:last-child {
-      width: 320px; /* largeur fixe pour la colonne Actions */
-    }
-    .table-container td:last-child {
-      white-space: nowrap; /* empêche le retour à la ligne */
-    }
-    .table-container td:last-child .action-btn {
-      margin: 0 8px 0 0;
-    }
-    .table-container td:last-child .action-btn:last-of-type {
-      margin-right: 0;
-    }
+    /* Alignement des boutons */
+    .table-container th:last-child { width: 320px; }
+    .table-container td:last-child { white-space: nowrap; }
+    .table-container td:last-child .action-btn { margin: 0 8px 0 0; }
+    .table-container td:last-child .action-btn:last-of-type { margin-right: 0; }
     @media (max-width: 900px) {
-      .table-container td:last-child {
-        white-space: normal; /* sur mobile, autorise retour à la ligne */
-      }
+      .table-container td:last-child { white-space: normal; }
     }
   </style>
 </head>
 <body>
 
 <aside class="sidebar">
-  <img th:src="@{/images/logo.png}" alt="Logo CID" class="logo" />
+  <img th:src="@{/logo.png}" alt="Logo CID" class="logo"/>
   <ul class="nav-links">
     <li><a href="/dashbord_agent_archivage">Tableau de bord</a></li>
     <li><a href="/archives/agent">Liste des archives</a></li>
     <li><a href="/archives/ajouter">Saisir fiche archive</a></li>
     <li><a href="/bibliotheques/ajouter">Saisir fiche bibliothèque</a></li>
-    <li><a href="/bibliotheques/agent" class="active">Liste biblio</a></li>
+    <li><a href="/bibliotheques/agent" class="active">Liste bibliothèque</a></li>
     <li><a href="/recevoir-formulaire">Recevoir formulaire</a></li>
     <li><a href="/gestion-heatmap">Gestion de salle d'archive</a></li>
   </ul>
@@ -175,25 +133,25 @@
         <td th:text="${biblio.category}">Catégorie</td>
         <td th:text="${biblio.fileName != null ? biblio.fileName : '—'}"></td>
         <td>
-          <a class="action-btn"
-             th:if="${biblio.fileName}"
-             th:href="@{/bibliotheques/modifier/{id}(id=${biblio.id})}">
+          <!-- Modifier : toujours visible -->
+          <a class="action-btn" th:href="@{/bibliotheques/modifier/{id}(id=${biblio.id})}">
             Modifier
           </a>
+          <!-- Télécharger : visible seulement si fichier -->
           <a class="action-btn"
-             th:if="${biblio.fileName}"
+             th:if="${biblio.fileName != null and !#strings.isEmpty(biblio.fileName)}"
              th:href="@{/bibliotheques/download/{name}(name=${biblio.fileName})}"
              download>
             Télécharger
           </a>
+          <!-- Imprimer : visible seulement si fichier -->
           <a class="action-btn"
-             th:if="${biblio.fileName}"
+             th:if="${biblio.fileName != null and !#strings.isEmpty(biblio.fileName)}"
              th:href="@{'/uploads/' + ${biblio.fileName}}"
              target="_blank"
              onclick="setTimeout(function(){window.print();}, 500); return false;">
             Imprimer
           </a>
-          <span th:if="${biblio.fileName == null}">—</span>
         </td>
       </tr>
       </tbody>

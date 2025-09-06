@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Modifier un utilisateur – CID</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+    <style>
+        :root {
+            --clr-light: #70A0C8;
+            --clr-bg: #073A87;
+            --clr-alt1: #F59201;
+            --clr-alt2: #F8B629;
+            --txt-strong: #fff;
+            --sidebar-bg: #e0e0e0;
+            --sidebar-text: #333;
+            --radius: 10px;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter',sans-serif; }
+        body { display:flex; min-height:100vh; background:var(--clr-light); color:#333; }
+
+        .sidebar { width:260px; background:var(--sidebar-bg); display:flex; flex-direction:column; align-items:center; padding:30px 0; box-shadow:2px 0 5px rgba(0,0,0,0.1); }
+        .sidebar .logo { width:140px; margin-bottom:40px; }
+        .nav-links { list-style:none; width:100%; flex:1; }
+        .nav-links a { display:block; padding:15px 30px; color:var(--sidebar-text); text-decoration:none; font-weight:500; transition:background .3s; }
+        .nav-links a.active, .nav-links a:hover { background:rgba(0,0,0,0.1); }
+        .logout { margin:20px 0; padding:12px 20px; background:linear-gradient(135deg,var(--clr-alt1),var(--clr-alt2)); color:var(--txt-strong); border:none; border-radius:5px; font-weight:700; cursor:pointer; transition:transform .2s; }
+        .logout:hover { transform:translateY(-2px); }
+
+        .main { flex:1; padding:40px; overflow-y:auto; background:#f7f9fc; }
+        .main h1 { font-size:2rem; color:var(--clr-bg); margin-bottom:10px; }
+        .form-edit { background:#fff; padding:30px; border-radius:var(--radius); box-shadow:0 8px 30px rgba(0,0,0,0.05); max-width:600px; margin:auto; }
+        .form-group { margin-bottom:15px; }
+        .form-group label { display:block; margin-bottom:5px; font-weight:600; color:#333; }
+        .form-group input, .form-group select { width:100%; padding:12px 16px; border:1px solid #ccc; border-radius:var(--radius); }
+        .form-actions { display:flex; gap:10px; margin-top:20px; }
+        .btn-submit { flex:1; padding:12px; border:none; border-radius:var(--radius); background:linear-gradient(135deg,var(--clr-alt1),var(--clr-alt2)); color:#fff; font-weight:600; cursor:pointer; }
+        .btn-cancel { flex:1; padding:12px; border:none; border-radius:var(--radius); background:#ccc; color:#333; cursor:pointer; text-align:center; line-height:2.5rem; }
+    </style>
+</head>
+<body>
+
+<aside class="sidebar">
+    <img th:src="@{/logo.png}" alt="Logo CID" class="logo"/>
+    <ul class="nav-links">
+        <li><a href="/admin-dashboard">Tableau de bord</a></li>
+        <li><a href="/gestion-users" class="active">Utilisateurs</a></li>
+        <li><a href="/consultation-archive">Archives</a></li>
+        <li><a href="/consultation-biblio">Bibliothèque</a></li>
+    </ul>
+    <button class="logout">Déconnexion</button>
+</aside>
+
+<main class="main">
+    <h1>Modifier l’utilisateur</h1>
+
+    <form th:action="@{'/gestion-users/update/' + ${newUser.id}}" th:object="${newUser}" method="post" class="form-edit">
+
+        <div class="form-group">
+            <label for="nom">Nom</label>
+            <input id="nom" type="text" th:field="*{nom}"/>
+        </div>
+        <div class="form-group">
+            <label for="prenom">Prénom</label>
+            <input id="prenom" type="text" th:field="*{prenom}"/>
+        </div>
+        <div class="form-group">
+            <label for="email">Adresse e-mail</label>
+            <input id="email" type="email" th:field="*{email}"/>
+        </div>
+        <div class="form-group">
+            <label for="role">Rôle</label>
+            <select id="role" th:field="*{role}">
+                <option value="">-- Sélectionner un rôle --</option>
+                <option th:each="r : ${roles}" th:value="${r}" th:text="${r}"></option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="pole">Pôle</label>
+            <select id="pole" th:field="*{nomPole}">
+                <option value="">-- Sélectionner un pôle --</option>
+                <option th:each="p : ${poles}" th:value="${p}" th:text="${p}"></option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="division">Division</label>
+            <select id="division" th:field="*{nomDivision}">
+                <option value="">-- Sélectionner une division --</option>
+                <option th:each="d : ${divisions}" th:value="${d}" th:text="${d}"></option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Mot de passe</label>
+            <input id="password" type="password" th:field="*{password}"/>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-submit">Enregistrer</button>
+            <a th:href="@{/gestion-users}" class="btn-cancel">Annuler</a>
+        </div>
+    </form>
+</main>
+
+<script>
+    document.querySelector('.logout').addEventListener('click', function () {
+        window.location.href = '/login';
+    });
+</script>
+
+</body>
+</html>

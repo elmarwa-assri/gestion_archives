@@ -32,13 +32,13 @@
 </head>
 <body>
 <aside class="sidebar">
-  <img th:src="@{/images/logo.png}" alt="Logo CID" class="logo" />
+  <img th:src="@{/logo.png}" alt="Logo CID" class="logo"/>
   <ul class="nav-links">
     <li><a href="/dashbord_agent_archivage">Tableau de bord</a></li>
     <li><a href="/archives/agent">Liste des archives</a></li>
     <li><a href="/archives/ajouter" class="active">Saisir fiche archive</a></li>
     <li><a href="/bibliotheques/ajouter">Saisir fiche bibliothèque</a></li>
-    <li><a href="/bibliotheques/agent">Liste biblio</a></li>
+    <li><a href="/bibliotheques/agent">Liste bibliothèque</a></li>
     <li><a href="/recevoir-formulaire">Recevoir formulaire</a></li>
     <li><a href="/gestion-heatmap">Gestion de salle d’archive</a></li>
   </ul>
@@ -62,6 +62,7 @@
         <label for="titre">Titre</label>
         <input type="text" id="titre" th:field="*{titre}" required />
       </div>
+
       <div class="grid-2">
         <div class="form-group">
           <label for="code">Code affaire</label>
@@ -72,10 +73,7 @@
           <input type="date" id="date" th:field="*{date}" />
         </div>
       </div>
-    </div>
 
-    <div class="section">
-      <h2>Archives</h2>
       <div class="grid-2">
         <div class="form-group">
           <label for="departement">Département</label>
@@ -84,29 +82,54 @@
           </select>
         </div>
         <div class="form-group">
+          <label for="division">Division</label>
+          <input type="text" id="division" th:field="*{division}" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="dateElimination">Date d’élimination</label>
+        <input type="date" id="dateElimination" th:field="*{dateElimination}" />
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Archives</h2>
+      <div class="grid-2">
+        <div class="form-group">
           <label for="nature">Nature</label>
           <select id="nature" th:field="*{nature}">
             <option th:each="n : ${natures}" th:value="${n}" th:text="${n}"></option>
           </select>
         </div>
-      </div>
-      <div class="grid-2">
         <div class="form-group">
           <label for="nom-fichier">Nom fichier</label>
           <input type="text" id="nom-fichier" th:field="*{nomFichier}" />
         </div>
+      </div>
+
+      <div class="grid-2">
         <div class="form-group">
           <label for="client">Client</label>
           <select id="client" th:field="*{client}">
             <option th:each="c : ${clients}" th:value="${c}" th:text="${c}"></option>
           </select>
         </div>
+        <div class="form-group">
+          <label for="cote">Cote</label>
+          <input type="text" id="cote" th:field="*{cote}" />
+        </div>
       </div>
 
-      <!-- Nouveau champ : Cote -->
-      <div class="form-group">
-        <label for="cote">Cote</label>
-        <input type="text" id="cote" th:field="*{cote}" />
+      <!-- Cote + Numéro de boîte sur la même ligne -->
+      <div class="grid-2">
+        <div class="form-group">
+          <label for="numBoite">Numéro de boîte</label>
+          <input type="text" id="numBoite" th:field="*{numBoite}" />
+        </div>
+        <div class="form-group">
+          <!-- champ libre pour garder un layout équilibré (ou tu peux le retirer) -->
+        </div>
       </div>
 
       <div class="form-group">

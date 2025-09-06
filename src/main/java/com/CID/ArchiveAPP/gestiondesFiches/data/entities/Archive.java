@@ -39,9 +39,14 @@ public class Archive {
     private String nomFichier;
     private String cote;
 
+    private String division;
+
     @Enumerated(EnumType.STRING)
     private Client client;
 
     @Column(length = 1000)
     private String resume;
+
+    @Column(name = "num_boite")
+    private String numBoite;
 }

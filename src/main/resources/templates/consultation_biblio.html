@@ -1,13 +1,10 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Fiches bibliothèque – CID</title>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
-    rel="stylesheet"
-  />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
   <style>
     /* Reset & base */
     * { margin:0; padding:0; box-sizing:border-box; }
@@ -21,7 +18,7 @@
       width:250px; background:#fff;
       box-shadow:2px 0 5px rgba(0,0,0,0.1);
       display:flex; flex-direction:column; align-items:center;
-      padding:30px 0;
+      padding:30px 0; position:fixed; top:0; bottom:0;
     }
     .sidebar .logo {
       width:120px; margin-bottom:40px;
@@ -47,44 +44,12 @@
     }
     .sidebar .logout:hover { background:#e67300; }
 
-    /* Main area */
+    /* Main */
     .main {
-      flex:1; padding:40px; overflow-y:auto;
+      margin-left:250px; padding:40px; flex:1; overflow-y:auto;
     }
     .main h1 {
-      font-size:2rem; color:#00539c; margin-bottom:10px;
-    }
-    .main p.lead {
-      font-size:1rem; margin-bottom:25px;
-    }
-
-    /* Toolbar */
-    .toolbar {
-      display:flex; gap:10px; align-items:center;
-      margin-bottom:20px;
-    }
-    .toolbar .search {
-      flex:1; padding:10px 15px;
-      border:1px solid #ccc; border-radius:5px;
-      font-size:0.95rem;
-    }
-    .toolbar .btn-search,
-    .toolbar .btn-export {
-      padding:10px 20px; color:#fff; border:none;
-      border-radius:5px; font-weight:700; cursor:pointer;
-      transition:background 0.3s;
-    }
-    .toolbar .btn-search {
-      background:#47a5dc;
-    }
-    .toolbar .btn-search:hover {
-      background:#268bbd;
-    }
-    .toolbar .btn-export {
-      background:#f28c1c;
-    }
-    .toolbar .btn-export:hover {
-      background:#e67300;
+      font-size:2rem; color:#00539c; margin-bottom:20px;
     }
 
     /* Table */
@@ -106,6 +71,8 @@
       color:#fff; border:none; border-radius:4px;
       font-size:0.9rem; cursor:pointer;
       transition:background 0.3s;
+      text-decoration:none;
+      display:inline-block;
     }
     .btn-download:hover {
       background:#003f7d;
@@ -114,103 +81,63 @@
 </head>
 <body>
 
-  <aside class="sidebar">
-    <img src="./logo.png" alt="Logo CID" class="logo" />
-    <ul class="nav-links">
-      <li><a href="/admin-dashboard">Tableau de bord</a></li>
-      <li><a href="/gestion-users">Utilisateurs</a></li>
-      <li><a href="/gestion-role">Rôles & perms</a></li>
-      <li><a href="/consultation-archive">Archives</a></li>
-      <li><a href="/consultation-biblio" class="active">Bibliothèque</a></li>
-    </ul>
+<aside class="sidebar">
+  <img th:src="@{/logo.png}" alt="Logo CID" class="logo"/>
+  <ul class="nav-links">
+    <li><a href="/admin-dashboard">Tableau de bord</a></li>
+    <li><a href="/gestion-users">Utilisateurs</a></li>
+    <li><a href="/consultation-archive">Archives</a></li>
+    <li><a href="/consultation-biblio" class="active">Bibliothèque</a></li>
+  </ul>
+  <form th:action="@{/logout}" method="post">
     <button class="logout">Déconnexion</button>
-  </aside>
+  </form>
+</aside>
 
-  <main class="main">
-    <h1>Fiches bibliothèque</h1>
-    <p class="lead">
-      Accédez à toutes les fiches de bibliothèque, filtrez par mot-clé et téléchargez-les si nécessaire.
-    </p>
+<main class="main">
+  <h1>📚 Fiches bibliothèque</h1>
 
-    <div class="toolbar">
-      <input type="text" id="search-term" class="search" placeholder="Recherche mot-clé…" />
-      <button id="btn-search" class="btn-search">Rechercher</button>
-      <button id="btn-export" class="btn-export">Exporter</button>
-    </div>
+  <table>
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Titre</th>
+      <th>Auteur</th>
+      <th>Date de création</th>
+      <th>Catégorie</th>
+      <th>Résumé</th>
+      <th>Fichier</th>
+      <th>Télécharger</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="biblio : ${biblios}">
+      <td th:text="${biblio.id}">1</td>
+      <td th:text="${biblio.title}">Titre</td>
+      <td th:text="${biblio.author}">Auteur</td>
+      <td th:text="${#temporals.format(biblio.dateCreation, 'dd/MM/yyyy')}">01/01/2025</td>
+      <td th:text="${biblio.category}">Catégorie</td>
+      <td th:text="${biblio.summary}">Résumé</td>
+      <td th:text="${biblio.fileName != null ? biblio.fileName : '—'}"></td>
+      <td>
+        <a th:if="${biblio.fileName != null and !#strings.isEmpty(biblio.fileName)}"
+           th:href="@{/bibliotheques/download/{name}(name=${biblio.fileName})}"
+           class="btn-download"
+           download>
+          Télécharger
+        </a>
+        <span th:if="${biblio.fileName == null or #strings.isEmpty(biblio.fileName)}">—</span>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</main>
 
-    <table id="biblio-table">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Titre</th>
-          <th>Auteur</th>
-          <th>Date</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>2001</td>
-          <td>Guide des archives</td>
-          <td>Élodie Faure</td>
-          <td>2024-11-05</td>
-          <td><button class="btn-download">Télécharger</button></td>
-        </tr>
-        <tr>
-          <td>2002</td>
-          <td>Index documentaire</td>
-          <td>Lucas Rey</td>
-          <td>2025-02-12</td>
-          <td><button class="btn-download">Télécharger</button></td>
-        </tr>
-        <tr>
-          <td>2003</td>
-          <td>Catalogue thématique</td>
-          <td>Sarah Benali</td>
-          <td>2025-05-30</td>
-          <td><button class="btn-download">Télécharger</button></td>
-        </tr>
-        <!-- … -->
-      </tbody>
-    </table>
-  </main>
-
-  <script>
-    const tableBody = document.querySelector('#biblio-table tbody');
-    const btnSearch = document.getElementById('btn-search');
-    const txtSearch = document.getElementById('search-term');
-    const btnExport = document.getElementById('btn-export');
-
-    // Filtrer par mot-clé
-    btnSearch.addEventListener('click', () => {
-      const term = txtSearch.value.toLowerCase();
-      tableBody.querySelectorAll('tr').forEach(tr => {
-        const title = tr.children[1].textContent.toLowerCase();
-        tr.style.display = title.includes(term) ? '' : 'none';
-      });
-    });
-
-    // Exporter (placeholder)
-    btnExport.addEventListener('click', () => {
-      alert('Export des fiches bibliothèque en cours…');
-      // Ajoutez ici la logique d’export (CSV/PDF…)
-    });
-
-    // Télécharger fiche
-    document.querySelectorAll('.btn-download').forEach(btn => {
-      btn.addEventListener('click', () => {
-        alert('Téléchargement de la fiche…');
-      });
-    });
-  </script>
-  <script>
-    document.querySelector('.logout').addEventListener('click', function () {
-      // Si tu utilises localStorage/sessionStorage :
-      // localStorage.clear();
-      // sessionStorage.clear();
-      window.location.href = '/login';
-    });
-  </script>
+<script>
+  document.querySelector('.logout').addEventListener('click', function () {
+    window.location.href = '/login';
+  });
+</script>
 
 </body>
 </html>

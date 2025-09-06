@@ -1,219 +1,113 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Consulter les archives – CID</title>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
-    rel="stylesheet"
-  />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Liste des Archives – CID</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
   <style>
-    /* Reset & base */
-    * { margin:0; padding:0; box-sizing:border-box }
-    body {
-      font-family:'Roboto',sans-serif;
-      display:flex; min-height:100vh;
-      background:#f0f2f5; color:#333;
-    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Roboto',sans-serif; display:flex; flex-direction:column; min-height:100vh; background:#f0f2f5; color:#333; }
+
     /* Sidebar */
-    .sidebar {
-      width:250px; background:#fff;
-      box-shadow:2px 0 5px rgba(0,0,0,0.1);
-      display:flex; flex-direction:column; align-items:center;
-      padding:30px 0;
-    }
-    .sidebar .logo {
-      width:120px; margin-bottom:40px;
-    }
-    .sidebar .nav-links {
-      list-style:none; width:100%; flex:1;
-    }
-    .sidebar .nav-links li a {
-      display:block; padding:15px 25px;
-      color:#333; text-decoration:none; font-weight:500;
-      transition:background 0.3s;
-    }
-    .sidebar .nav-links li a.active,
-    .sidebar .nav-links li a:hover {
-      background:#f0f0f0;
-    }
-    .sidebar .logout {
-      margin:20px; padding:10px 20px;
-      background:#f28c1c; color:#fff;
-      border:none; border-radius:5px;
-      font-weight:700; cursor:pointer;
-      transition:background 0.3s;
-    }
-    .sidebar .logout:hover { background:#e67300 }
+    .sidebar { width:250px; background:#fff; box-shadow:2px 0 5px rgba(0,0,0,0.1); display:flex; flex-direction:column; align-items:center; padding:30px 0; position:fixed; top:0; bottom:0; }
+    .sidebar .logo { width:120px; margin-bottom:40px; }
+    .sidebar .nav-links { list-style:none; width:100%; flex:1; }
+    .sidebar .nav-links li a { display:block; padding:15px 25px; color:#333; text-decoration:none; font-weight:500; transition:background .3s; }
+    .sidebar .nav-links li a.active, .sidebar .nav-links li a:hover { background:#f0f0f0; }
+    .sidebar .logout { margin:20px; padding:10px 20px; background:#f28c1c; color:#fff; border:none; border-radius:5px; font-weight:700; cursor:pointer; transition:background .3s; }
+    .sidebar .logout:hover { background:#e67300; }
 
-    /* Main area */
-    .main {
-      flex:1; padding:40px; overflow-y:auto;
-    }
-    .main h1 {
-      font-size:2rem; color:#00539c; margin-bottom:10px;
-    }
-    .main p.lead {
-      font-size:1rem; margin-bottom:25px;
-    }
-
-    /* Toolbar */
-    .toolbar {
-      display:flex; flex-wrap:wrap; gap:10px; align-items:center;
-      margin-bottom:20px;
-    }
-    .toolbar .search,
-    .toolbar input[type="date"] {
-      flex:1; max-width:200px;
-      padding:10px 15px; border:1px solid #ccc;
-      border-radius:5px; font-size:0.95rem;
-    }
-    .toolbar .btn-search {
-      padding:10px 20px; background:#47a5dc;
-      color:#fff; border:none; border-radius:5px;
-      font-weight:700; cursor:pointer;
-      transition:background 0.3s;
-    }
-    .toolbar .btn-search:hover { background:#268bbd }
-    .toolbar .btn-export {
-      padding:10px 20px; background:#f28c1c;
-      color:#fff; border:none; border-radius:5px;
-      font-weight:700; cursor:pointer;
-      transition:background 0.3s;
-    }
-    .toolbar .btn-export:hover { background:#e67300 }
+    /* Main */
+    .main { margin-left:250px; padding:40px; flex:1; overflow-y:auto; }
+    .main h1 { font-size:2rem; color:#00539c; margin-bottom:20px; }
+    .success-message { background-color:#d4edda; color:#155724; padding:12px; border-left:5px solid #28a745; margin-bottom:20px; border-radius:5px; font-weight:500; }
 
     /* Table */
-    table {
-      width:100%; border-collapse:collapse;
-      background:#fff; box-shadow:0 4px 10px rgba(0,0,0,0.05);
-    }
-    th, td {
-      padding:15px; text-align:left; border-bottom:1px solid #eee;
-    }
-    th {
-      background:#00539c; color:#fff; font-weight:500;
-    }
-    tbody tr:hover { background:#f9f9f9 }
-    .btn-download {
-      padding:6px 12px; background:#00539c;
-      color:#fff; border:none; border-radius:4px;
-      font-size:0.9rem; cursor:pointer;
+    table { width:100%; border-collapse:collapse; background-color:#fff; border-radius:8px; overflow:hidden; box-shadow:0 4px 10px rgba(0,0,0,0.05); }
+    th, td { padding:14px; text-align:left; font-size:0.95rem; }
+    th { background-color:#00539c; color:white; font-weight:600; }
+    tr:nth-child(even) { background-color:#f9f9f9; }
+    tr:hover { background-color:#eef4fb; }
+
+    /* Buttons */
+    .btn-action {
+      padding:6px 12px;
+      border:none;
+      border-radius:4px;
+      font-size:0.85rem;
+      cursor:pointer;
       transition:background 0.3s;
     }
-    .btn-download:hover { background:#003f7d }
+    .btn-print { background-color:#17a2b8; color:white; }
+    .btn-print:hover { background-color:#117a8b; }
   </style>
 </head>
 <body>
 
-  <aside class="sidebar">
-    <img src="./logo.png" alt="Logo CID" class="logo" />
-    <ul class="nav-links">
-      <li><a href="/admin-dashboard">Tableau de bord</a></li>
-      <li><a href="/gestion-users">Utilisateurs</a></li>
-      <li><a href="/gestion-role">Rôles & perms</a></li>
-      <li><a href="/consultation-archive" class="active">Archives</a></li>
-      <li><a href="/consultation-biblio">Bibliothèque</a></li>
-    </ul>
+<aside class="sidebar">
+  <img src="./logo.png" alt="Logo CID" class="logo"/>
+  <ul class="nav-links">
+    <li><a href="/admin-dashboard">Tableau de bord</a></li>
+    <li><a href="/gestion-users">Utilisateurs</a></li>
+    <li><a href="/consultation-archive" class="active">Archives</a></li>
+    <li><a href="/consultation-biblio">Bibliothèque</a></li>
+  </ul>
+  <form th:action="@{/logout}" method="post">
     <button class="logout">Déconnexion</button>
-  </aside>
+  </form>
+</aside>
 
-  <main class="main">
-    <h1>Consulter les archives</h1>
-    <p class="lead">Parcourez l’ensemble des archives, recherchez par critères et exportez vos documents.</p>
+<main class="main">
+  <h1>📚 Liste des Archives</h1>
 
-    <div class="toolbar">
-      <input type="text" id="search-term" class="search" placeholder="Recherche texte…" />
-      <input type="date" id="date-from" />
-      <input type="date" id="date-to" />
-      <button id="btn-search" class="btn-search">Rechercher</button>
-      <button id="btn-export" class="btn-export">Exporter</button>
-    </div>
+  <div th:if="${success}" class="success-message" th:text="${success}"></div>
 
-    <table id="archives-table">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Document</th>
-          <th>Date d’archivage</th>
-          <th>Auteur</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>1001</td>
-          <td>Contrat Client A</td>
-          <td>2025-01-15</td>
-          <td>Marie Dubois</td>
-          <td><button class="btn-download">Télécharger</button></td>
-        </tr>
-        <tr>
-          <td>1002</td>
-          <td>Rapport Annuel 2024</td>
-          <td>2025-02-20</td>
-          <td>Ahmed Benali</td>
-          <td><button class="btn-download">Télécharger</button></td>
-        </tr>
-        <tr>
-          <td>1003</td>
-          <td>Procès-Verbal Réunion</td>
-          <td>2025-03-10</td>
-          <td>Claire Martin</td>
-          <td><button class="btn-download">Télécharger</button></td>
-        </tr>
-        <!-- … -->
-      </tbody>
-    </table>
-  </main>
+  <table>
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Titre</th>
+      <th>Code</th>
+      <th>Département</th>
+      <th>Division</th>
+      <th>Nature</th>
+      <th>État</th>
+      <th>Client</th>
+      <th>Résumé</th>
+      <th>Date d'Édition</th>
+      <th>Date d'Élimination</th>
+      <th>Numéro de Boîte</th> <!-- ✅ Nouvelle colonne -->
+      <th>Imprimer</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="archive : ${archives}">
+      <td th:text="${archive.id}"></td>
+      <td th:text="${archive.titre}"></td>
+      <td th:text="${archive.code}"></td>
+      <td th:text="${archive.departement}"></td>
+      <td th:text="${archive.division}"></td>
+      <td th:text="${archive.nature}"></td>
+      <td th:text="${archive.etat}"></td>
+      <td th:text="${archive.client}"></td>
+      <td th:text="${archive.resume}"></td>
+      <td th:text="${archive.date}"></td>
+      <td th:text="${archive.dateElimination}"></td>
+      <td th:text="${archive.numBoite}"></td> <!-- ✅ Affichage -->
+      <td>
+        <button type="button" class="btn-action btn-print" onclick="window.print()">🖨 Imprimer</button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</main>
 
-  <script>
-    const table = document.getElementById('archives-table').querySelector('tbody');
-    const btnSearch = document.getElementById('btn-search');
-    const txt = document.getElementById('search-term');
-    const from = document.getElementById('date-from');
-    const to = document.getElementById('date-to');
-    const btnExport = document.getElementById('btn-export');
-
-    // Filtrer la table
-    btnSearch.addEventListener('click', () => {
-      const term = txt.value.toLowerCase();
-      const start = from.value;
-      const end = to.value;
-      table.querySelectorAll('tr').forEach(tr => {
-        const cols = tr.children;
-        const doc = cols[1].textContent.toLowerCase();
-        const date = cols[2].textContent;
-        let match = true;
-        if (term && !doc.includes(term)) match = false;
-        if (start && date < start) match = false;
-        if (end && date > end) match = false;
-        tr.style.display = match ? '' : 'none';
-      });
-    });
-
-    // Exporter les documents (placeholder)
-    btnExport.addEventListener('click', () => {
-      alert('Export des documents en cours…');
-      // Ici, implémentez votre logique d’export (CSV/PDF, etc.)
-    });
-
-    // Télécharger un document
-    document.querySelectorAll('.btn-download').forEach(btn => {
-      btn.addEventListener('click', () => {
-        alert('Téléchargement du document…');
-      });
-    });
-  </script>
-  <script>
-    document.querySelector('.logout').addEventListener('click', function () {
-      // Si tu utilises localStorage/sessionStorage :
-      // localStorage.clear();
-      // sessionStorage.clear();
-      window.location.href = '/login';
-    });
-  </script>
+<script>
+  document.querySelector('.logout').addEventListener('click', function () {
+    window.location.href = '/login';
+  });
+</script>
 
 </body>
 </html>

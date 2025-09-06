@@ -62,23 +62,20 @@
     tr:hover { background:#f5f8ff; }
 
     .btn { padding:6px 12px; border:none; border-radius:4px; font-size:0.9rem; cursor:pointer; text-decoration:none; display:inline-block; }
-    .btn-saisir { background:#f28c1c; color:#fff; margin-right:6px; }
+    .btn-saisir { background:#f28c1c; color:#fff; }
     .btn-saisir:hover { background:#e67300; }
-    .btn-download { background:#47a5dc; color:#fff; }
-    .btn-download:hover { background:#268bbd; }
-    .btn[disabled] { opacity:.5; cursor:not-allowed; }
   </style>
 </head>
 <body>
 
 <aside class="sidebar">
-  <img th:src="@{/images/logo.png}" alt="Logo CID" class="logo" />
+  <img th:src="@{/logo.png}" alt="Logo CID" class="logo"/>
   <ul class="nav-links">
     <li><a href="/dashbord_agent_archivage">Tableau de bord</a></li>
     <li><a href="/archives/agent">Liste des archives</a></li>
     <li><a href="/archives/ajouter">Saisir fiche archive</a></li>
     <li><a href="/bibliotheques/ajouter">Saisir fiche bibliothèque</a></li>
-    <li><a href="/bibliotheques/agent">Liste biblio</a></li>
+    <li><a href="/bibliotheques/agent">Liste bibliothèque</a></li>
     <li><a href="/recevoir-formulaire" class="active">Recevoir formulaire</a></li>
     <li><a href="/gestion-heatmap">Gestion de salle d’archive</a></li>
   </ul>
@@ -110,7 +107,7 @@
       <th>Nature</th>
       <th>Client</th>
       <th>Date édition</th>
-      <th>Actions</th>
+      <th>Action</th>
     </tr>
     </thead>
     <tbody>
@@ -124,11 +121,6 @@
       <td th:text="${archive.date != null ? #temporals.format(archive.date, 'yyyy-MM-dd') : '—'}">—</td>
       <td>
         <a th:href="@{/archives/saisir/{id}(id=${archive.id})}" class="btn btn-saisir">Saisir</a>
-        <a th:if="${archive.nomFichier != null and !#strings.isEmpty(archive.nomFichier)}"
-           th:href="@{/archives/telecharger/{id}(id=${archive.id})}"
-           class="btn btn-download">Télécharger</a>
-        <a th:unless="${archive.nomFichier != null and !#strings.isEmpty(archive.nomFichier)}"
-           class="btn btn-download" href="javascript:void(0)" disabled>Télécharger</a>
       </td>
     </tr>
     </tbody>

@@ -11,18 +11,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping("/agent/archives") // <-- base path AGENT (différent du CADRE)
-public class AgentFichesController {
+@RequestMapping("/cadre/archives") // <-- base path CADRE
+public class ArchiveCadreController {
 
     @GetMapping("/formulaire")
     public String afficherFormulaire(Model model) {
         if (!model.containsAttribute("archive")) {
             model.addAttribute("archive", new ArchiveDTO());
         }
-        return "agent/archives/formulaire"; // adapte au nom réel de ta vue
+        return "cadre/archives/formulaire"; // adapte au nom réel de ta vue
     }
 
-    @PostMapping("/envoiFormulaire") // <-- /agent/archives/envoiFormulaire
+    @PostMapping("/envoiFormulaire") // <-- /cadre/archives/envoiFormulaire
     public String envoyerFormulaireVersAgent(@Valid ArchiveDTO archive,
                                              BindingResult bindingResult,
                                              RedirectAttributes ra) {
@@ -30,12 +30,12 @@ public class AgentFichesController {
             ra.addFlashAttribute("org.springframework.validation.BindingResult.archive", bindingResult);
             ra.addFlashAttribute("archive", archive);
             ra.addFlashAttribute("errorMessage", "Veuillez corriger les erreurs du formulaire.");
-            return "redirect:/agent/archives/formulaire";
+            return "redirect:/cadre/archives/formulaire";
         }
 
-        // TODO: ta logique métier ici (traitement côté AGENT)
+        // TODO: ta logique métier ici (enregistrer, notifier, etc.)
 
-        ra.addFlashAttribute("successMessage", "Formulaire reçu et traité par l’AGENT.");
-        return "redirect:/agent/archives/formulaire";
+        ra.addFlashAttribute("successMessage", "Formulaire envoyé par le CADRE au service agent.");
+        return "redirect:/cadre/archives/formulaire";
     }
 }

@@ -18,45 +18,35 @@
     .main { margin-left:250px; padding:40px; flex:1; overflow-y:auto; }
     .main h1 { font-size:2rem; color:#00539c; margin-bottom:20px; }
     .success-message { background-color:#d4edda; color:#155724; padding:12px; border-left:5px solid #28a745; margin-bottom:20px; border-radius:5px; font-weight:500; }
+
+    .search-container { margin-bottom:20px; display:flex; justify-content:flex-start; gap:10px; }
+    .search-container input { padding:8px 12px; width:280px; border:1px solid #ccc; border-radius:5px; font-size:0.95rem; }
+    .search-container button { padding:8px 15px; background:#00539c; color:white; border:none; border-radius:5px; cursor:pointer; font-weight:600; transition:background .3s; }
+    .search-container button:hover { background:#003f7d; }
+
     table { width:100%; border-collapse:collapse; background-color:#fff; border-radius:8px; overflow:hidden; box-shadow:0 4px 10px rgba(0,0,0,0.05); }
     th, td { padding:14px; text-align:left; font-size:0.95rem; }
     th { background-color:#00539c; color:white; font-weight:600; }
     tr:nth-child(even) { background-color:#f9f9f9; }
     tr:hover { background-color:#eef4fb; }
-    .btn-action {
-      padding:6px 12px;
-      border:none;
-      border-radius:4px;
-      font-size:0.85rem;
-      cursor:pointer;
-      transition:background 0.3s;
-    }
-    .btn-edit {
-      background-color:#ffc107;
-      color:#000;
-    }
-    .btn-edit:hover {
-      background-color:#e0a800;
-    }
-    .btn-print {
-      background-color:#17a2b8;
-      color:white;
-    }
-    .btn-print:hover {
-      background-color:#117a8b;
-    }
+    .btn-action { padding:6px 12px; border:none; border-radius:4px; font-size:0.85rem; cursor:pointer; transition:background 0.3s; }
+    .btn-edit { background-color:#ffc107; color:#000; }
+    .btn-edit:hover { background-color:#e0a800; }
+    .btn-print { background-color:#17a2b8; color:white; }
+    .btn-print:hover { background-color:#117a8b; }
   </style>
 </head>
 <body>
 
+<!-- ✅ Sidebar -->
 <aside class="sidebar">
-  <img th:src="@{/images/logo.png}" alt="Logo CID" class="logo" />
+  <img th:src="@{/logo.png}" alt="Logo CID" class="logo"/>
   <ul class="nav-links">
     <li><a href="/dashbord_agent_archivage">Tableau de bord</a></li>
     <li><a href="/archives/agent" class="active">Liste des archives</a></li>
     <li><a href="/archives/ajouter">Saisir fiche archive</a></li>
     <li><a href="/bibliotheques/ajouter">Saisir fiche bibliothèque</a></li>
-    <li><a href="/bibliotheques/agent">Liste biblio</a></li>
+    <li><a href="/bibliotheques/agent">Liste bibliothèque</a></li>
     <li><a href="/recevoir-formulaire">Recevoir formulaire</a></li>
     <li><a href="/gestion-heatmap">Gestion de salle d’archive</a></li>
   </ul>
@@ -65,11 +55,22 @@
   </form>
 </aside>
 
+<!-- ✅ Main content -->
 <main class="main">
   <h1>📚 Liste des Archives</h1>
 
+  <!-- Message succès -->
   <div th:if="${success}" class="success-message" th:text="${success}"></div>
 
+  <!-- 🔍 Barre de recherche -->
+  <div class="search-container">
+    <form th:action="@{/archives/agent}" method="get">
+      <input type="text" name="keyword" th:value="${keyword}" placeholder="Rechercher une archive..." />
+      <button type="submit">🔍 Rechercher</button>
+    </form>
+  </div>
+
+  <!-- ✅ Tableau Archives -->
   <table>
     <thead>
     <tr>
@@ -77,10 +78,13 @@
       <th>Titre</th>
       <th>Code Affaire</th>
       <th>Département</th>
+      <th>Division</th>
       <th>Nature</th>
       <th>Client</th>
       <th>Résumé</th>
       <th>Date d'Édition</th>
+      <th>Date d'Élimination</th>
+      <th>Numéro de boîte</th> <!-- ✅ Nouvelle colonne -->
       <th>Modifier</th>
       <th>Imprimer</th>
     </tr>
@@ -91,12 +95,14 @@
       <td th:text="${archive.titre}">Titre</td>
       <td th:text="${archive.code}">AFF-001</td>
       <td th:text="${archive.departement}">DEP</td>
+      <td th:text="${archive.division}">Division X</td>
       <td th:text="${archive.nature}">NATURE</td>
       <td th:text="${archive.client}">CLIENT</td>
       <td th:text="${archive.resume}">Résumé</td>
       <td th:text="${archive.date}">2025-01-01</td>
+      <td th:text="${archive.dateElimination}">2026-01-01</td>
+      <td th:text="${archive.numBoite}">B-123</td> <!-- ✅ Affichage Numéro de boîte -->
       <td>
-
         <a th:href="@{/archives/saisir/{id}(id=${archive.id})}">
           <button type="button" class="btn-action btn-edit">✏ Modifier</button>
         </a>

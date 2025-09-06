@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -67,14 +67,13 @@
     .admin-details h3 { margin-bottom:5px; color:var(--clr-bg); font-size:1.25rem; }
     .admin-details p { margin-bottom:4px; color:#555; font-size:0.95rem; }
 
-    /* Chart containers */
-    #heatmap, #chart {
-      width:100%; background:#fff;
+    /* Chart container */
+    #chart {
+      width:100%; height:350px;
+      background:#fff;
       border-radius:10px; box-shadow:0 4px 10px var(--shadow-light);
       margin-bottom:30px;
     }
-    #heatmap { height:400px; }
-    #chart   { height:350px; }
 
     /* Action cards */
     .cards {
@@ -100,140 +99,84 @@
 </head>
 <body>
 
-  <aside class="sidebar">
-    <img src="./logo.png" alt="Logo CID" class="logo"/>
-    <ul class="nav-links">
-      <li><a href="/admin-dashboard" class="active">Tableau de bord</a></li>
-      <li><a href="/gestion-users">Utilisateurs</a></li>
-      <li><a href="/gestion-role">Rôles & perms</a></li>
-      <li><a href="/consultation-archive">Archives</a></li>
-      <li><a href="/consultation-biblio">Bibliothèque</a></li>
-    </ul>
-    <button class="logout">Déconnexion</button>
-  </aside>
+<aside class="sidebar">
+  <img src="./logo.png" alt="Logo CID" class="logo"/>
+  <ul class="nav-links">
+    <li><a href="/admin-dashboard" class="active">Tableau de bord</a></li>
+    <li><a href="/gestion-users">Utilisateurs</a></li>
+    <li><a href="/consultation-archive">Archives</a></li>
+    <li><a href="/consultation-biblio">Bibliothèque</a></li>
+  </ul>
+  <button class="logout">Déconnexion</button>
+</aside>
 
-  <main class="main">
-    <h1>Bienvenue, Administrateur</h1>
-    <p class="lead">Tableau de bord — vue d’ensemble</p>
+<main class="main">
+  <h1>Bienvenue, Administrateur</h1>
+  <p class="lead">Tableau de bord — vue d’ensemble</p>
 
-    <!-- Informations administrateur -->
-    <div class="admin-info">
-      <img src="./profil.jpg" alt="Avatar Administrateur" class="admin-avatar"/>
-      <div class="admin-details">
-        <h3>Hamza Talidi</h3>
-        <p>Rôle : Administrateur</p>
-        <p>Email : hamza.talidi@cid.ma</p>
-      </div>
+  <!-- Informations administrateur -->
+  <div class="admin-info">
+    <img src="./profil.png" alt="Avatar Administrateur" class="admin-avatar"/>
+    <div class="admin-details">
+      <h3>Marwa El-assri</h3>
+      <p>Rôle : Administrateur</p>
+      <p>Email : marwael@gmail.com</p>
     </div>
+  </div>
 
-    <!-- Heatmap ECharts: Rangs (lignes) et Armoires (colonnes) -->
-    <div id="heatmap"></div>
+  <!-- Graphique archives par mois -->
+  <div id="chart"></div>
 
-    <!-- Graphique archives par mois -->
-    <div id="chart"></div>
-
-    <!-- Cartes des actions -->
-    <div class="cards">
-      <div class="card">
-        <h2>Utilisateurs</h2>
-        <p>Créez, modifiez ou supprimez des comptes utilisateur. Gérez leurs accès.</p>
-        <a href="/gestion-users">Gérer</a>
-      </div>
-      <div class="card">
-        <h2>Rôles & permissions</h2>
-        <p>Définissez de nouveaux rôles, attribuez des permissions et ajustez les droits.</p>
-        <a href="gestion-role">Gérer</a>
-      </div>
-      <div class="card">
-        <h2>Archives</h2>
-        <p>Parcourez l’ensemble des archives, effectuez des recherches et exportez vos documents.</p>
-        <a href="consultation-archive">Consulter</a>
-      </div>
-      <div class="card">
-        <h2>Bibliothèque</h2>
-        <p>Accédez aux fiches, filtrez par mot‑clé et téléchargez‑les si nécessaire.</p>
-        <a href="consultation-biblio">Consulter</a>
-      </div>
+  <!-- Cartes des actions -->
+  <div class="cards">
+    <div class="card">
+      <h2>Utilisateurs</h2>
+      <p>Créez, modifiez ou supprimez des comptes utilisateur. Gérez leurs accès.</p>
+      <a href="/gestion-users">Gérer</a>
     </div>
-  </main>
+    <div class="card">
+      <h2>Archives</h2>
+      <p>Parcourez l’ensemble des archives, effectuez des recherches et exportez vos documents.</p>
+      <a href="/consultation-archive">Consulter</a>
+    </div>
+    <div class="card">
+      <h2>Bibliothèque</h2>
+      <p>Accédez aux fiches, filtrez par mot-clé et téléchargez-les si nécessaire.</p>
+      <a href="/consultation-biblio">Consulter</a>
+    </div>
+  </div>
+</main>
 
-  <!-- Librairies JS -->
-  <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<!-- Librairie ApexCharts -->
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
-  <!-- Heatmap script modifié pour n'afficher que le nombre de boîtes -->
-  <script>
-    var chartDom = document.getElementById('heatmap');
-    var myChart = echarts.init(chartDom);
-    var ranks = ['Rang 1','Rang 2','Rang 3','Rang 4','Rang 5','Rang 6','Rang 7'];
-    var cabinets = ['Armoire A','Armoire B','Armoire C','Armoire D','Armoire E','Armoire F','Armoire G'];
-    var data = [];
-    for (var i = 0; i < ranks.length; i++) {
-      for (var j = 0; j < cabinets.length; j++) {
-        data.push([j, i, Math.round(Math.random() * 20)]);
-      }
-    }
-    var option = {
-      tooltip: {
-        position: 'top',
-        formatter: function(params) {
-          return ranks[params.value[1]] + ' / ' + cabinets[params.value[0]] + '<br/>Boîtes : ' + params.value[2];
-        }
-      },
-      grid: { height: '50%', top: '10%' },
-      xAxis: { type: 'category', data: cabinets, splitArea: { show: true } },
-      yAxis: { type: 'category', data: ranks, splitArea: { show: true } },
-      visualMap: {
-        min: 0, max: 20, calculable: true,
-        orient: 'horizontal', left: 'center', bottom: '15%',
-        inRange: { color: ['#E0F3F8', '#0868AC'] },
-        formatter: function(val) { return val + ' boîtes'; }
-      },
-      series: [{
-        name: 'Boîtes', type: 'heatmap', data: data,
-        label: {
-          show: true,
-          formatter: function(params) { return params.value[2]; }
-        },
-        emphasis: {
-          itemStyle: {
-            shadowBlur: 10,
-            shadowColor: 'rgba(0,0,0,0.5)'
-          }
-        }
-      }]
-    };
-    myChart.setOption(option);
-    myChart.on('click', function(params) {
-      if (params.seriesType === 'heatmap') {
-        var rang = ranks[params.value[1]];
-        var cabinet = cabinets[params.value[0]];
-        var val = params.value[2];
-        alert('Emplacement : ' + rang + ' / ' + cabinet + '\nNombre de boîtes : ' + val);
-      }
-    });
-  </script>
+<!-- Archives par mois script dynamique -->
+<script>
+  fetch('/api/stats/archives')
+          .then(response => response.json())
+          .then(data => {
+            const categories = Object.keys(data);   // Mois : Jan, Fév, Mar...
+            const values = Object.values(data);     // Nombre d’archives
 
-  <!-- Archives par mois script -->
-  <script>
-    var options = {
-      series: [{ name:'Archives', data:[10,41,35,51,49,62,69,91,148] }],
-      chart: { height:350, type:'line', zoom:{ enabled:false } },
-      dataLabels: { enabled:false },
-      stroke: { curve:'straight' },
-      title: { text:'Archives par mois', align:'left' },
-      grid: { row:{ colors:['#f3f3f3','transparent'], opacity:0.5 } },
-      xaxis: { categories:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep'] }
-    };
-    new ApexCharts(document.querySelector('#chart'), options).render();
-  </script>
-  <script>
-    document.querySelector('.logout').addEventListener('click', function () {
-      // Si tu utilises localStorage/sessionStorage :
-      // localStorage.clear();
-      // sessionStorage.clear();
-      window.location.href = '/login';
-    });
-  </script>
+            var options = {
+              series: [{ name:'Archives', data: values }],
+              chart: { height:350, type:'line', zoom:{ enabled:false } },
+              dataLabels: { enabled:false },
+              stroke: { curve:'straight' },
+              title: { text:'Archives par mois', align:'left' },
+              grid: { row:{ colors:['#f3f3f3','transparent'], opacity:0.5 } },
+              xaxis: { categories: categories }
+            };
+
+            new ApexCharts(document.querySelector('#chart'), options).render();
+          })
+          .catch(error => console.error("Erreur chargement stats:", error));
+</script>
+
+<script>
+  document.querySelector('.logout').addEventListener('click', function () {
+    window.location.href = '/login';
+  });
+</script>
 </body>
 </html>
