@@ -13,6 +13,6 @@ public class ChefController {
 
     @GetMapping("/liste_archive_pole")
     public String listeArchivePole() {
-        return "liste_archive_pole";
+        return "liste_archive_division";
     }
 }

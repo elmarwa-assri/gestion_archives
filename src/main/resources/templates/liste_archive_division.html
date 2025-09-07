@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mes archives envoyées – CID</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box }
+    body { font-family:'Roboto',sans-serif; display:flex; min-height:100vh; background:#f0f2f5; color:#555; }
+    .sidebar { width:250px; background:#fff; box-shadow:2px 0 5px rgba(0,0,0,0.1); display:flex; flex-direction:column; align-items:center; padding:30px 0; position:fixed; inset:0 auto 0 0; }
+    .sidebar .logo { width:120px; margin-bottom:40px }
+    .sidebar .nav-links { list-style:none; width:100%; flex:1 }
+    .sidebar .nav-links li a { display:block; padding:15px 25px; color:#333; text-decoration:none; font-weight:500; transition:background .3s; }
+    .sidebar .nav-links li a.active, .sidebar .nav-links li a:hover { background:#f0f0f0; }
+    .sidebar .logout { margin:20px; padding:10px 20px; background:#f28c1c; color:#fff; border:none; border-radius:5px; font-weight:700; cursor:pointer; transition:background .3s; }
+    .sidebar .logout:hover { background:#e67300 }
+    .main { margin-left:250px; flex:1; padding:40px; overflow-y:auto; }
+    h1 { font-size:2rem; color:#00539c; margin-bottom:10px; }
+    p.lead { margin-bottom:20px; }
+    .toolbar { display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:20px; }
+    .toolbar select { padding:10px 15px; border:1px solid #ccc; border-radius:5px; }
+    .toolbar .btn { padding:10px 16px; border:none; border-radius:5px; font-weight:700; cursor:pointer; }
+    .btn-primary { background:#47a5dc; color:#fff; }
+    .btn-outline { background:#fff; border:1px solid #ccc; }
+    table { width:100%; border-collapse:collapse; background:#fff; box-shadow:0 4px 10px rgba(0,0,0,0.05); }
+    th, td { padding:12px 15px; text-align:left; border-bottom:1px solid #eee; }
+    th { background:#00539c; color:#fff; font-weight:500; }
+    tbody tr:hover { background:#f9f9f9 }
+    .muted { color:#888; }
+  </style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <img th:src="@{/logo.png}" src="/logo.png" alt="Logo CID" class="logo" />
+  <ul class="nav-links">
+    <li><a href="/dashbord_cadre">Tableau de bord</a></li>
+    <li><a href="/mes_archives" class="active">Mes archives envoyées</a></li>
+  </ul>
+  <button class="logout" type="button">Déconnexion</button>
+</aside>
+
+<main class="main">
+  <!-- Nouveau titre corrigé -->
+  <h1>Mes archives envoyées</h1>
+  <p class="lead">Voici la liste de toutes vos archives avec possibilité de filtrage.</p>
+
+  <!-- Filtre -->
+  <form class="toolbar" method="get" th:action="@{/mes_archives}">
+    <label for="dept">Département</label>
+    <select name="dept" id="dept" aria-label="Département">
+      <option value="" th:selected="${selectedDept == null}">Tous les départements</option>
+      <option th:each="d : ${departements}"
+              th:value="${d}"
+              th:text="${d}"
+              th:selected="${selectedDept == d}">
+      </option>
+    </select>
+    <button class="btn btn-primary" type="submit">Filtrer</button>
+    <a class="btn btn-outline" th:href="@{/mes_archives}">Réinitialiser</a>
+  </form>
+
+  <!-- Tableau -->
+  <div th:if="${#lists.isEmpty(archives)}" class="muted">Aucune archive trouvée</div>
+  <table th:if="${!#lists.isEmpty(archives)}">
+    <thead>
+    <tr>
+      <th>Titre</th>
+      <th>Code</th>
+      <th>Date</th>
+      <th>Département</th>
+      <th>Nature</th>
+      <th>Client</th>
+      <th>Résumé</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="a : ${archives}">
+      <td th:text="${a.titre}">Titre</td>
+      <td th:text="${a.code}">Code</td>
+      <td th:text="${a.date}">2025-01-01</td>
+      <td th:text="${a.departement}">Département</td>
+      <td th:text="${a.nature}">Nature</td>
+      <td th:text="${a.client}">Client</td>
+      <td th:text="${a.resume}">Résumé</td>
+    </tr>
+    </tbody>
+  </table>
+</main>
+
+<script>
+  document.querySelector('.logout').addEventListener('click', () => {
+    window.location.href = '/login';
+  });
+</script>
+</body>
+</html>

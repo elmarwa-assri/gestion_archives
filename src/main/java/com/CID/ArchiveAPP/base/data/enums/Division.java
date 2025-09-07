@@ -5,5 +5,10 @@ public enum Division {
     PROJET,
     SUPPORT,
     FORMATION,
-    AUDIT
+    AUDIT,
+    ENERGIE,
+    EAU,
+    ENVIRONNEMENT,
+    INFORMATIQUE,
+    SIG
 }

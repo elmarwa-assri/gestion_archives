@@ -19,6 +19,9 @@ public class Boite {
     @Column(nullable = false, unique = true)
     private String code;
 
+    // ✅ optionnel
+    private Integer numero;
+
     // Chaque boîte appartient à une ligne
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ligne_id", nullable = false)

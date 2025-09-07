@@ -1,64 +1,69 @@
 package com.CID.ArchiveAPP.gestiondesBoite.controller;
 
 import com.CID.ArchiveAPP.gestiondesBoite.data.entities.Boite;
-import com.CID.ArchiveAPP.gestiondesBoite.data.entities.Armoire;
-import com.CID.ArchiveAPP.gestiondesBoite.data.entities.Ligne;
-import com.CID.ArchiveAPP.gestiondesBoite.data.repositories.BoiteRepository;
 import com.CID.ArchiveAPP.gestiondesBoite.data.repositories.ArmoireRepository;
+import com.CID.ArchiveAPP.gestiondesBoite.data.repositories.BoiteRepository;
 import com.CID.ArchiveAPP.gestiondesBoite.data.repositories.LigneRepository;
-
+import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
 @Controller
-@RequestMapping("/gestion-boite")
+@RequiredArgsConstructor
 public class BoiteController {
 
     private final BoiteRepository boiteRepository;
-    private final ArmoireRepository armoireRepository;
     private final LigneRepository ligneRepository;
+    private final ArmoireRepository armoireRepository;
 
-    public BoiteController(BoiteRepository boiteRepository,
-                           ArmoireRepository armoireRepository,
-                           LigneRepository ligneRepository) {
-        this.boiteRepository = boiteRepository;
-        this.armoireRepository = armoireRepository;
-        this.ligneRepository = ligneRepository;
-    }
+    @GetMapping("/gestion-boite")
+    public String listBoites(@RequestParam(value = "keyword", required = false) String keyword,
+                             Model model) {
 
-    // 📌 Afficher la page de gestion
-    @GetMapping
-    public String listBoites(@RequestParam(value = "keyword", required = false) String keyword, Model model) {
-        List<Boite> boites;
-        if (keyword != null && !keyword.isEmpty()) {
-            boites = boiteRepository.findByCodeContainingIgnoreCase(keyword);
-        } else {
-            boites = boiteRepository.findAll();
-        }
+        List<Boite> boites = (keyword != null && !keyword.isBlank())
+                ? boiteRepository.searchWithRelations(keyword.trim())
+                : boiteRepository.findAllWithRelations();
 
         model.addAttribute("boites", boites);
         model.addAttribute("newBoite", new Boite());
-        model.addAttribute("armoires", armoireRepository.findAll());
         model.addAttribute("lignes", ligneRepository.findAll());
+        model.addAttribute("armoires", armoireRepository.findAll());
         model.addAttribute("keyword", keyword);
 
-        return "gestion_boites"; // doit correspondre au fichier gestion-boite.html
+        return "gestion_boites"; // resources/templates/gestion_boites.html
     }
 
-    // 📌 Ajouter une boîte
-    @PostMapping("/ajouter")
-    public String addBoite(@ModelAttribute("newBoite") Boite boite) {
-        boiteRepository.save(boite);
+    @PostMapping("/gestion-boite/ajouter")
+    public String addBoite(@ModelAttribute("newBoite") Boite boite,
+                           @RequestParam("ligneId") Long ligneId,
+                           @RequestParam("armoireId") Long armoireId,
+                           RedirectAttributes ra) {
+        try {
+            boite.setLigne(ligneRepository.getReferenceById(ligneId));
+            boite.setArmoire(armoireRepository.getReferenceById(armoireId));
+            boiteRepository.save(boite);
+            ra.addFlashAttribute("successMessage", "Boîte ajoutée.");
+        } catch (DataIntegrityViolationException e) {
+            ra.addFlashAttribute("errorMessage", "Le code de boîte existe déjà.");
+        } catch (Exception e) {
+            ra.addFlashAttribute("errorMessage", "Erreur lors de l’ajout de la boîte.");
+        }
         return "redirect:/gestion-boite";
     }
 
-    // 📌 Supprimer une boîte
-    @GetMapping("/supprimer/{id}")
-    public String deleteBoite(@PathVariable Long id) {
-        boiteRepository.deleteById(id);
+    @GetMapping("/gestion-boite/supprimer/{id}")
+    public String deleteBoite(@PathVariable Long id, RedirectAttributes ra) {
+        try {
+            boiteRepository.deleteById(id);
+            ra.addFlashAttribute("successMessage", "Boîte supprimée.");
+        } catch (Exception e) {
+            ra.addFlashAttribute("errorMessage", "Impossible de supprimer cette boîte.");
+        }
         return "redirect:/gestion-boite";
     }
 }

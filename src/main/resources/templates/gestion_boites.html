@@ -79,21 +79,20 @@
     <section class="card">
         <h2 style="color:#00539c;">Ajouter une boîte</h2>
 
-        <form th:action="@{/gestion-boite/ajouter}" th:object="${newBoite}" method="post" class="form-row">
-            <!-- CSRF si Spring Security -->
-            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        <form th:action="@{/gestion-boite/ajouter}" method="post" class="form-row">
+            <!-- CSRF uniquement si présent -->
+            <input type="hidden" name="_csrf" th:if="${_csrf != null}" th:value="${_csrf.token}"/>
 
-            <input type="text" th:field="*{code}" placeholder="Code de la boîte" required/>
+            <!-- Champs -->
+            <input type="text" name="code" placeholder="Code de la boîte" required/>
 
-            <input type="number" th:field="*{numero}" placeholder="Numéro (optionnel)"/>
-
-            <!-- ✅ Envoi correct des IDs (relations) -->
-            <select th:field="*{ligne.id}" required>
+            <!-- IDs simples pour correspondre au contrôleur -->
+            <select name="ligneId" required>
                 <option value="">-- Sélectionner une ligne --</option>
                 <option th:each="l : ${lignes}" th:value="${l.id}" th:text="${l.nom}"></option>
             </select>
 
-            <select th:field="*{armoire.id}" required>
+            <select name="armoireId" required>
                 <option value="">-- Sélectionner une armoire --</option>
                 <option th:each="a : ${armoires}" th:value="${a.id}" th:text="${a.nom}"></option>
             </select>
@@ -110,7 +109,6 @@
                 <tr>
                     <th>ID</th>
                     <th>Code</th>
-                    <th>Numéro</th>
                     <th>Ligne</th>
                     <th>Armoire</th>
                     <th>Actions</th>
@@ -118,17 +116,15 @@
                 </thead>
                 <tbody>
                 <tr th:if="${#lists.isEmpty(boites)}">
-                    <td colspan="6" style="text-align:center; color:#777;">Aucune boîte trouvée</td>
+                    <td colspan="5" style="text-align:center; color:#777;">Aucune boîte trouvée</td>
                 </tr>
 
                 <tr th:each="boite : ${boites}">
                     <td th:text="${boite.id}"></td>
                     <td th:text="${boite.code}"></td>
-                    <td th:text="${boite.numero}">—</td>
                     <td th:text="${boite.ligne != null ? boite.ligne.nom : '—'}"></td>
                     <td th:text="${boite.armoire != null ? boite.armoire.nom : '—'}"></td>
                     <td>
-                        <!-- Suppression (simple lien GET; idéalement utiliser POST + _method=DELETE côté contrôleur) -->
                         <a th:href="@{'/gestion-boite/supprimer/' + ${boite.id}}"
                            class="btn btn-danger"
                            onclick="return confirm('Supprimer cette boîte ?');">Supprimer</a>

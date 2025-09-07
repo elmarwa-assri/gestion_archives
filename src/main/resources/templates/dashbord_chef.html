@@ -63,22 +63,6 @@
       display:flex; flex-direction:column; align-items:flex-start;
     }
 
-    .profile {
-      display:flex; align-items:center; width:100%; max-width:800px;
-      background:#fff; padding:20px; border-radius:10px;
-      box-shadow:0 4px 10px rgba(0,0,0,0.05); margin-bottom:30px;
-    }
-    .profile img {
-      width:60px; height:60px; border-radius:50%;
-      margin-right:20px;
-    }
-    .profile .info h2 {
-      font-size:1.4rem; color:#00539c; margin-bottom:4px;
-    }
-    .profile .info p {
-      font-size:0.95rem; color:#333;
-    }
-
     .main h1 {
       font-size:2rem; color:#00539c; margin-bottom:10px;
     }
@@ -86,18 +70,10 @@
       font-size:1rem; margin-bottom:25px;
     }
 
-    #linechart {
-      width:100%; max-width:800px;
-      background:#fff; border-radius:10px;
-      box-shadow:0 4px 10px rgba(0,0,0,0.05);
-      margin-bottom:30px;
-      height:250px;
-    }
-
     .cards {
       display:grid;
       grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
-      gap:20px; width:100%; max-width:800px;
+      gap:20px; width:100%; max-width:900px;
     }
     .card {
       background:#fff; border-radius:10px; padding:30px;
@@ -130,7 +106,7 @@
   <div class="top-section">
     <img src="./logo.png" alt="Logo CID" class="logo" />
     <ul class="nav-links">
-      <li><a href="/dashbord_chefl" class="active">Tableau de bord</a></li>
+      <li><a href="/dashbord_chef" class="active">Tableau de bord</a></li>
       <li><a href="/liste_archive_pole">Liste des archives du pôle</a></li>
     </ul>
   </div>
@@ -140,21 +116,10 @@
 </aside>
 
 <main class="main">
-  <div class="profile">
-    <img src="./profil.jpg" alt="Avatar Chef" />
-    <div class="info">
-      <h2>Dr. Amal El Idrissi</h2>
-      <p>Email : amal.elidrissi@cid.ma</p>
-      <p>Division : Pôle informatique</p>
-    </div>
-  </div>
-
   <h1>Tableau de bord – Chef de division</h1>
   <p class="lead">
-    Visualisez uniquement les archives de votre pôle via le graphe mensuel.
+    Accédez directement aux fonctionnalités principales de votre pôle.
   </p>
-
-  <div id="linechart"></div>
 
   <div class="cards">
     <div class="card">
@@ -162,36 +127,16 @@
       <p>
         Parcourez l’ensemble des archives de votre division, appliquez des filtres
         par mot-clé, date ou autres critères, et sélectionnez une fiche pour la
-        modifier, la consulter ou l’imprimer.
+        consulter ou l’imprimer.
       </p>
       <a href="/liste_archive_pole">Accéder</a>
     </div>
   </div>
 </main>
 
-<!-- JS librairies -->
-<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-
-<!-- Line chart script -->
-<script>
-  const lineOptions = {
-    series:[{ name:'Archives pôle', data:[25,30,28,35,40,45,50,55,60,65,70,75] }],
-    chart:{ height:250, type:'line', zoom:{enabled:false} },
-    dataLabels:{ enabled:false },
-    stroke:{ curve:'straight' },
-    title:{ text:'Archives créées par mois', align:'left' },
-    grid:{ row:{ colors:['#f3f3f3','transparent'], opacity:0.5 } },
-    xaxis:{ categories:['Jan','Fév','Mar','Avr','Mai','Juin','Juil','Août','Sept','Oct','Nov','Déc'] }
-  };
-  new ApexCharts(document.querySelector('#linechart'), lineOptions).render();
-</script>
-
 <!-- Déconnexion Script -->
 <script>
   document.querySelector('.logout').addEventListener('click', function () {
-    // Si tu utilises localStorage/sessionStorage :
-    // localStorage.clear();
-    // sessionStorage.clear();
     window.location.href = '/login';
   });
 </script>

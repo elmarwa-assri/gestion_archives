@@ -1,5 +1,6 @@
 package com.CID.ArchiveAPP.gestiondesFiches.data.repositories;
 
+import com.CID.ArchiveAPP.base.data.enums.Division;
 import com.CID.ArchiveAPP.gestiondesFiches.data.entities.Archive;
 import com.CID.ArchiveAPP.gestiondesFiches.data.enums.Departement;
 import com.CID.ArchiveAPP.gestiondesFiches.data.enums.Etat;
@@ -12,11 +13,11 @@ import java.util.List;
 
 @Repository
 public interface ArchiveRepository extends JpaRepository<Archive, Long> {
-
     List<Archive> findAllByEtat(Etat etat);
 
     List<Archive> findAllByDepartementAndEtat(Departement departement, Etat etat);
 
+    List<Archive> findAllByDivision(Division division);
     List<Archive> findAllByDepartement(Departement departement);
 
     boolean existsByIdAndDepartement(Long id, Departement departement);

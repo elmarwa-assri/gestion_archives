@@ -3,49 +3,79 @@
 <head>
   <meta charset="UTF-8"/>
   <title>Formulaire cadre</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
+    body { font-family:'Roboto',sans-serif; display:flex; background:#f0f2f5; margin:0; }
+    .sidebar { width:250px; background:#fff; box-shadow:2px 0 5px rgba(0,0,0,0.1); display:flex; flex-direction:column; align-items:center; padding:30px 0; position:fixed; top:0; bottom:0; }
+    .sidebar .logo { width:120px; margin-bottom:40px; }
+    .sidebar .nav-links { list-style:none; width:100%; flex:1; }
+    .sidebar .nav-links li a { display:block; padding:15px 25px; color:#333; text-decoration:none; font-weight:500; transition:background .3s; }
+    .sidebar .nav-links li a.active, .sidebar .nav-links li a:hover { background:#f0f0f0; }
+    .sidebar .logout { margin:20px; padding:10px 20px; background:#f28c1c; color:#fff; border:none; border-radius:5px; font-weight:700; cursor:pointer; transition:background .3s; }
+    .sidebar .logout:hover { background:#e67300; }
+
+    .main { margin-left:250px; padding:40px; flex:1; }
+    h1 { font-size:2rem; color:#00539c; margin-bottom:20px; }
+    .success { background:#d4edda; color:#155724; padding:10px 20px; border-radius:5px; border:1px solid #c3e6cb; margin-bottom:20px; }
+    form { background:#fff; padding:20px; border-radius:8px; box-shadow:0 4px 10px rgba(0,0,0,0.05); }
+    label { display:block; margin-top:15px; font-weight:bold; }
+    input, select, textarea { width:100%; padding:10px; border:1px solid #ccc; border-radius:5px; margin-top:5px; }
+    button { margin-top:20px; background:#47a5dc; color:#fff; border:none; padding:12px 20px; border-radius:5px; cursor:pointer; font-weight:600; }
+    button:hover { background:#268bbd; }
+  </style>
 </head>
 <body>
-<h1>Formulaire de projet à archiver (cadre)</h1>
 
-<div th:if="${successMessage}" style="color: green" th:text="${successMessage}"></div>
+<aside class="sidebar">
+  <img th:src="@{/logo.png}" alt="Logo CID" class="logo"/>
+  <ul class="nav-links">
+    <li><a href="/dashbord_cadre">Tableau de bord</a></li>
+    <li><a href="/cadre/formulaire" class="active">Saisir fiche archive </a></li>
+    <li><a href="/cadre/consulter">Consulter </a></li>
+  </ul>
+  <button class="logout">Déconnexion</button>
+</aside>
 
-<form th:action="@{/cadre/archives/envoiFormulaire}" method="post" th:object="${archive}">
-  <!-- CSRF (si Spring Security) -->
-  <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+<main class="main">
+  <h1>Formulaire de projet à archiver (cadre)</h1>
 
-  <label>Titre</label>
-  <input type="text" th:field="*{titre}" required/><br/>
+  <div th:if="${successMessage}" class="success" th:text="${successMessage}"></div>
 
-  <label>Code</label>
-  <input type="text" th:field="*{code}" required/><br/>
+  <form th:action="@{/cadre/archives/envoiFormulaire}" method="post" th:object="${archive}">
+    <div th:if="${_csrf != null}">
+      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+    </div>
 
-  <label>Date</label>
-  <input type="date" th:field="*{date}" required/><br/>
+    <label for="titre">Titre</label>
+    <input type="text" id="titre" th:field="*{titre}" required/>
 
-  <label>Département</label>
-  <select th:field="*{departement}" required>
-    <option th:each="d : ${T(com.CID.ArchiveAPP.gestiondesFiches.data.enums.Departement).values()}"
-            th:value="${d}" th:text="${d}"></option>
-  </select><br/>
+    <label for="code">Code</label>
+    <input type="text" id="code" th:field="*{code}" required/>
 
-  <label>Nature</label>
-  <select th:field="*{nature}" required>
-    <option th:each="n : ${T(com.CID.ArchiveAPP.gestiondesFiches.data.enums.Nature).values()}"
-            th:value="${n}" th:text="${n}"></option>
-  </select><br/>
+    <label for="date">Date édition</label>
+    <input type="date" id="date" th:field="*{date}" required/>
 
-  <label>Client</label>
-  <select th:field="*{client}" required>
-    <option th:each="c : ${T(com.CID.ArchiveAPP.gestiondesFiches.data.enums.Client).values()}"
-            th:value="${c}" th:text="${c}"></option>
-  </select><br/>
+    <label for="departement">Département</label>
+    <select id="departement" th:field="*{departement}" required>
+      <option th:each="d : ${departements}" th:value="${d}" th:text="${d}"></option>
+    </select>
 
-  <label>Résumé</label>
-  <textarea th:field="*{resume}" rows="4"></textarea><br/>
+    <label for="nature">Nature</label>
+    <select id="nature" th:field="*{nature}" required>
+      <option th:each="n : ${natures}" th:value="${n}" th:text="${n}"></option>
+    </select>
 
-  <button type="submit">Envoyer à l’agent</button>
-</form>
+    <label for="client">Client</label>
+    <select id="client" th:field="*{client}" required>
+      <option th:each="c : ${clients}" th:value="${c}" th:text="${c}"></option>
+    </select>
 
-<p style="margin-top: 16px;"><a href="/cadre/consulter">Retour à la liste</a></p>
+    <label for="resume">Résumé</label>
+    <textarea id="resume" th:field="*{resume}" rows="4"></textarea>
+
+    <button type="submit">Envoyer à l’agent</button>
+  </form>
+</main>
+
 </body>
 </html>
